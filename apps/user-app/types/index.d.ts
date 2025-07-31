@@ -136,11 +136,11 @@ declare type NewDwollaCustomerParams = {
   ssn: string;
 };
 
-declare interface CreditCardProps {
-  account: Account;
-  userName: string;
-  showBalance?: boolean;
-}
+// declare interface CreditCardProps {
+//   account: Account;
+//   userName: string;
+//   showBalance?: boolean;
+// }
 
 declare interface BankInfoProps {
   account: Account;
@@ -148,12 +148,12 @@ declare interface BankInfoProps {
   type: "full" | "card";
 }
 
-declare interface HeaderBoxProps {
-  type?: "title" | "greeting";
-  title: string;
-  subtext: string;
-  user?: string;
-}
+// declare interface HeaderBoxProps {
+//   type?: "title" | "greeting";
+//   title: string;
+//   subtext: string;
+//   user?: string;
+// }
 
 declare interface MobileNavProps {
   user: User;
@@ -202,21 +202,21 @@ declare interface BankTabItemProps {
   appwriteItemId?: string;
 }
 
-declare interface TotlaBalanceBoxProps {
-  accounts: Account[];
-  totalBanks: number;
-  totalCurrentBalance: number;
-}
+// declare interface TotlaBalanceBoxProps {
+//   accounts: Account[];
+//   totalBanks: number;
+//   totalCurrentBalance: number;
+// }
 
 declare interface FooterProps {
   user: User;
 }
 
-declare interface RightSidebarProps {
-  user: User;
-  transactions: Transaction[];
-  banks: Bank[] & Account[];
-}
+// declare interface RightSidebarProps {
+//   user: User;
+//   transactions: Transaction[];
+//   banks: Bank[] & Account[];
+// }
 
 declare interface SiderbarProps {
   user: User;
@@ -246,9 +246,9 @@ declare interface CategoryProps {
   category: CategoryCount;
 }
 
-declare interface DoughnutChartProps {
-  accounts: Account[];
-}
+// declare interface DoughnutChartProps {
+//   accounts: Account[];
+// }
 
 declare interface PaymentTransferFormProps {
   accounts: Account[];

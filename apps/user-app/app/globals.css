@@ -1,6 +1,11 @@
- @import "tailwindcss";
+   @import "tailwindcss"; 
+/*    
+   :root {
+  font-family: var(--font-ibm-plex-serif);
+} */
 
-/* 
+  
+   /*
 * {
   margin: 0;
   padding: 0;
@@ -363,4 +368,4 @@
   .sidebar-label {
     @apply text-16 font-semibold text-black-2 max-xl:hidden;
   }
-} */ 
+}  */
