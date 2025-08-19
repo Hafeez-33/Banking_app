@@ -7,18 +7,18 @@ declare type SearchParamProps = {
 
 // ========================================
 
-declare type SignUpParams = {
-  firstName: string;
-  lastName: string;
-  address1: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  dateOfBirth: string;
-  ssn: string;
-  email: string;
-  password: string;
-};
+// declare type SignUpParams = {
+//   firstName: string;
+//   lastName: string;
+//   address1: string;
+//   city: string;
+//   state: string;
+//   postalCode: string;
+//   dateOfBirth: string;
+//   ssn: string;
+//   email: string;
+//   password: string;
+// };
 
 declare type LoginUser = {
   email: string;
@@ -33,6 +33,7 @@ declare type User = {
   dwollaCustomerId: string;
   firstName: string;
   lastName: string;
+  name:string,
   address1: string;
   city: string;
   state: string;
@@ -208,9 +209,9 @@ declare interface BankTabItemProps {
 //   totalCurrentBalance: number;
 // }
 
-declare interface FooterProps {
-  user: User;
-}
+// declare interface FooterProps {
+//   user: User;
+// }
 
 // declare interface RightSidebarProps {
 //   user: User;
@@ -292,10 +293,10 @@ declare interface getTransactionsByBankIdProps {
   bankId: string;
 }
 
-declare interface signInProps {
-  email: string;
-  password: string;
-}
+// declare interface signInProps {
+//   email: string;
+//   password: string;
+// }
 
 declare interface getUserInfoProps {
   userId: string;
