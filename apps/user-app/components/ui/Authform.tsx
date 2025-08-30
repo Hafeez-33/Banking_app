@@ -24,6 +24,7 @@ import { authformSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
+import PlaidLink from "./PlaidLink";
 
 const Authform = ({ type }: { type: string }) => {
   // State to manage user and loading status
@@ -39,6 +40,10 @@ const Authform = ({ type }: { type: string }) => {
     defaultValues: {
       email: "",
       password: "",
+      firstName: "",
+      lastName: "",
+      address1: "",
+      dateOfBirth: "",
     },
   });
 
@@ -51,7 +56,19 @@ const Authform = ({ type }: { type: string }) => {
     try {
       // sign up with appwrite and create plaid link token for bank acoounts
       if (type === "sign-up") {
-        const newUser = await signUp(data);
+        const userData = {
+          firstName: data.firstName!,
+          lastName: data.lastName!,
+          address1: data.address1!,
+          city: data.city!,
+          state: data.state!,
+          postalCode: data.postalCode!,
+          ssn: data.ssn!,
+          dateOfBirth: data.dateOfBirth!,
+          email: data.email,
+          password: data.password,
+        };
+        const newUser = await signUp(userData);
 
         setUser(newUser);
       }
@@ -88,7 +105,7 @@ const Authform = ({ type }: { type: string }) => {
 
         <div className="flex flex-col gap-1 px-4 md:gap-3 ">
           <h1 className="text-lg lg:text-2xl font-semibold text-gray-900">
-            {user? 'Link Account' : type === 'sign-in' ? 'Sign In' : 'SIgn Up'}
+            {user ? "Link Account" : type === "sign-in" ? "Sign In" : "SIgn Up"}
             <p className="text-base font-normal text-gray-600">
               {user
                 ? "Link your account to get started"
@@ -99,11 +116,13 @@ const Authform = ({ type }: { type: string }) => {
       </header>
 
       {user ? (
-        <div className="flex flex-col gap-3"></div>
+        <div className="flex flex-col gap-3">
+          <PlaidLink user={user} variant="primary" />
+        </div>
       ) : (
         <>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
               {type === "sign-up" && (
                 <>
                   <div className="flex gap-4">
@@ -122,14 +141,41 @@ const Authform = ({ type }: { type: string }) => {
                     />
                   </div>
 
+                  <CustomizidInput
+                    control={form.control}
+                    name="address1"
+                    placeholder="Enter your specific address"
+                    label="Address"
+                  />
+
+                  <CustomizidInput
+                    control={form.control}
+                    name="city"
+                    label="City"
+                    placeholder="Enter your city"
+                  />
+
                   <div className="flex gap-4">
                     <CustomizidInput
                       control={form.control}
-                      name="address"
-                      placeholder="Enter your specific address"
-                      label="Address"
+                      name="state"
+                      label="State"
+                      placeholder="Example: NY"
                     />
-
+                    <CustomizidInput
+                      control={form.control}
+                      name="postalCode"
+                      label="Postal Code"
+                      placeholder="Example: 11101"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <CustomizidInput
+                      control={form.control}
+                      name="ssn"
+                      label="SSN"
+                      placeholder="Example: 1234"
+                    />
                     <CustomizidInput
                       control={form.control}
                       name="dateOfBirth"

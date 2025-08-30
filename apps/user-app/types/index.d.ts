@@ -19,6 +19,18 @@ declare type SearchParamProps = {
 //   email: string;
 //   password: string;
 // };
+declare type SignUpParams = {
+  firstName: string;
+  lastName: string;
+  address1: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  dateOfBirth: string;
+  ssn: string;
+  email: string;
+  password: string;
+};
 
 declare type LoginUser = {
   email: string;
@@ -33,7 +45,7 @@ declare type User = {
   dwollaCustomerId: string;
   firstName: string;
   lastName: string;
-  name:string,
+  name: string;
   address1: string;
   city: string;
   state: string;
@@ -173,11 +185,11 @@ declare interface PaginationProps {
   totalPages: number;
 }
 
-declare interface PlaidLinkProps {
-  user: User;
-  variant?: "primary" | "ghost";
-  dwollaCustomerId?: string;
-}
+// declare interface PlaidLinkProps {
+//   user: User;
+//   variant?: "primary" | "ghost";
+//   dwollaCustomerId?: string;
+// }
 
 // declare type User = sdk.Models.Document & {
 //   accountId: string;
@@ -302,19 +314,19 @@ declare interface getUserInfoProps {
   userId: string;
 }
 
-declare interface exchangePublicTokenProps {
-  publicToken: string;
-  user: User;
-}
+// declare interface exchangePublicTokenProps {
+//   publicToken: string;
+//   user: User;
+// }
 
-declare interface createBankAccountProps {
-  accessToken: string;
-  userId: string;
-  accountId: string;
-  bankId: string;
-  fundingSourceUrl: string;
-  sharableId: string;
-}
+// declare interface createBankAccountProps {
+//   accessToken: string;
+//   userId: string;
+//   accountId: string;
+//   bankId: string;
+//   fundingSourceUrl: string;
+//   sharableId: string;
+// }
 
 declare interface getBanksProps {
   userId: string;
