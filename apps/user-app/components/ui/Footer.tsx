@@ -25,7 +25,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
             : "flex size-base items-center justify-center rounded-full bg-gray-200 max-xl:hidden"
         }
       >
-        <p className="text-xl font-bold text-gray-700">{user?.name[0]}</p>
+        <p className="text-xl font-bold text-gray-700">{user?.firstName[0]}</p>
       </div>
 
       <div
@@ -36,7 +36,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
         }
       >
         <h1 className="text-base truncate text-gray-800 font-semibold">
-          {user?.name}
+          {user?.firstName}
         </h1>
         <p className="text-base truncate font-normal text-gray-600">
           {user?.email}

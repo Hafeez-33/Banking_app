@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 
-declare type SearchParamProps = {
-  params: { [key: string]: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+// declare type SearchParamProps = {
+//   params: { [key: string]: string };
+//   searchParams: { [key: string]: string | string[] | undefined };
+// };
 
 // ========================================
 
@@ -101,7 +101,7 @@ declare type Bank = {
   accessToken: string;
   fundingSourceUrl: string;
   userId: string;
-  sharableId: string;
+  shareableId: string;
 };
 
 declare type AccountTypes =
@@ -155,11 +155,11 @@ declare type NewDwollaCustomerParams = {
 //   showBalance?: boolean;
 // }
 
-declare interface BankInfoProps {
-  account: Account;
-  appwriteItemId?: string;
-  type: "full" | "card";
-}
+// declare interface BankInfoProps {
+//   account: Account;
+//   appwriteItemId?: string;
+//   type: "full" | "card";
+// }
 
 // declare interface HeaderBoxProps {
 //   type?: "title" | "greeting";
@@ -180,10 +180,10 @@ declare interface PageHeaderProps {
   connectBank?: boolean;
 }
 
-declare interface PaginationProps {
-  page: number;
-  totalPages: number;
-}
+// declare interface PaginationProps {
+//   page: number;
+//   totalPages: number;
+// }
 
 // declare interface PlaidLinkProps {
 //   user: User;
@@ -210,10 +210,10 @@ declare interface BankDropdownProps {
   otherStyles?: string;
 }
 
-declare interface BankTabItemProps {
-  account: Account;
-  appwriteItemId?: string;
-}
+// declare interface BankTabItemProps {
+//   account: Account;
+//   appwriteItemId?: string;
+// }
 
 // declare interface TotlaBalanceBoxProps {
 //   accounts: Account[];
@@ -235,29 +235,29 @@ declare interface SiderbarProps {
   user: User;
 }
 
-declare interface RecentTransactionsProps {
-  accounts: Account[];
-  transactions: Transaction[];
-  appwriteItemId: string;
-  page: number;
-}
+// declare interface RecentTransactionsProps {
+//   accounts: Account[];
+//   transactions: Transaction[];
+//   appwriteItemId: string;
+//   page: number;
+// }
 
 declare interface TransactionHistoryTableProps {
   transactions: Transaction[];
   page: number;
 }
 
-declare interface CategoryBadgeProps {
-  category: string;
-}
+// declare interface CategoryBadgeProps {
+//   category: string;
+// }
 
 declare interface TransactionTableProps {
   transactions: Transaction[];
 }
 
-declare interface CategoryProps {
-  category: CategoryCount;
-}
+// declare interface CategoryProps {
+//   category: CategoryCount;
+// }
 
 // declare interface DoughnutChartProps {
 //   accounts: Account[];
@@ -310,9 +310,9 @@ declare interface getTransactionsByBankIdProps {
 //   password: string;
 // }
 
-declare interface getUserInfoProps {
-  userId: string;
-}
+// declare interface getUserInfoProps {
+//   userId: string;
+// }
 
 // declare interface exchangePublicTokenProps {
 //   publicToken: string;
@@ -328,14 +328,14 @@ declare interface getUserInfoProps {
 //   sharableId: string;
 // }
 
-declare interface getBanksProps {
-  userId: string;
-}
+// declare interface getBanksProps {
+//   userId: string;
+// }
 
-declare interface getBankProps {
-  documentId: string;
-}
+// declare interface getBankProps {
+//   documentId: string;
+// }
 
-declare interface getBankByAccountIdProps {
-  accountId: string;
-}
+// declare interface getBankByAccountIdProps {
+//   accountId: string;
+// }

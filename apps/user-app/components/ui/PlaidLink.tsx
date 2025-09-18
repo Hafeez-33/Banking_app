@@ -1,8 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "./button";
 import { useRouter } from "next/navigation";
-import { PlaidLinkOnSuccess, PlaidLinkOptions, usePlaidLink } from 'react-plaid-link'
-import { createLinkToken, exchangePublicToken } from "@/lib/actions/user.actions";
+import {
+  PlaidLinkOnSuccess,
+  PlaidLinkOptions,
+  usePlaidLink,
+} from "react-plaid-link";
+import {
+  createLinkToken,
+  exchangePublicToken,
+} from "@/lib/actions/user.actions";
+import Image from "next/image";
 
 declare interface PlaidLinkProps {
   user: User;
@@ -10,47 +18,74 @@ declare interface PlaidLinkProps {
   dwollaCustomerId?: string;
 }
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
-    const router = useRouter();
-    const [token, setToken] = useState('')
+  const router = useRouter();
+  const [token, setToken] = useState("");
 
-    useEffect(()=>{
-        const getLinkToken = async() =>{
-            const data = await createLinkToken(user)
+  useEffect(() => {
+    const getLinkToken = async () => {
+      const data = await createLinkToken(user);
 
-            setToken(data?.linkToken)
-        }
-        getLinkToken();
-    },[user])
-    
-    const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token: string) => {
-    await exchangePublicToken({
-      publicToken: public_token,
-      user,
-    })
+      setToken(data?.linkToken);
+    };
+    getLinkToken();
+  }, [user]);
 
-    router.push('/');
-  }, [user])
-    
-    const config : PlaidLinkOptions = {
-        token,
-        onSuccess
-    }
+  const onSuccess = useCallback<PlaidLinkOnSuccess>(
+    async (public_token: string) => {
+      await exchangePublicToken({
+        publicToken: public_token,
+        user,
+      });
 
-    const { open, ready } = usePlaidLink(config);
- 
- 
-    return (
+      router.push("/");
+    },
+    [user]
+  );
+
+  const config: PlaidLinkOptions = {
+    token,
+    onSuccess,
+  };
+
+  const { open, ready } = usePlaidLink(config);
+
+  return (
     <>
       {variant === "primary" ? (
-        <Button onClick={()=>open()} 
-        disabled={!ready}
-        className="text-base rounded-lg border border-white-100 bg-blue-500 font-semibold text-white shadow-form">
+        <Button
+          onClick={() => open()}
+          disabled={!ready}
+          className="text-base rounded-lg border border-white-100 bg-blue-500 font-semibold text-white shadow-form"
+        >
           Connect Bank
         </Button>
       ) : variant === "ghost" ? (
-        <Button>connect bank</Button>
+        <Button
+          variant="ghost"
+          onClick={() => open()}
+          className="flex cursor-pointer items-center justify-center gap-3 rounded-lg px-3 py-7 hover:bg-white lg:justify-start"
+        >
+          <Image
+            src="/icons/connect-bank.svg"
+            alt="connect-bank"
+            height={24}
+            width={24}
+          />
+          <p className="text-hidden text-base font-semibold' text-black-2 xl:block">Connect Bank</p>
+        </Button>
       ) : (
-        <Button>Connect Bank</Button>
+        <Button
+          onClick={() => open()}
+          className="flex !justify-start cursor-pointer gap-3 rounded-lg !bg-transparent flex-row"
+        >
+          <Image
+            src="/icons/connect-bank.svg"
+            alt="connect-bank"
+            height={24}
+            width={24}
+          />
+          <p className="text-base font-semibold' text-black-2">Connect Bank</p>
+        </Button>
       )}
     </>
   );
