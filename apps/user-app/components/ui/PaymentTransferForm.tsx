@@ -31,7 +31,7 @@ const formSchema = z.object({
   name: z.string().min(4, "Transfer note is too short"),
   amount: z.string().min(4, "Amount is too short"),
   senderBank: z.string().min(4, "Please select a valid bank account"),
-  sharableId: z.string().min(8, "Please select a valid sharable Id"),
+  shareableId: z.string().min(8, "Please select a valid sharable Id"),
 });
 
 const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
@@ -45,7 +45,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
       email: "",
       amount: "",
       senderBank: "",
-      sharableId: "",
+      shareableId: "",
     },
   });
 
@@ -53,7 +53,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
     setIsLoading(true);
 
     try {
-      const receiverAccountId = decryptId(data.sharableId);
+      const receiverAccountId = decryptId(data.shareableId);
       const receiverBank = await getBankByAccountId({
         accountId: receiverAccountId,
       });
@@ -101,12 +101,12 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           name="senderBank"
           render={() => (
             <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item pb-6 pt-5">
-                <div className="payment-transfer_form-content">
-                  <FormLabel className="text-14 font-medium text-gray-700">
+              <div className="flex w-full max-w-[850px] flex-col gap-3 md:flex-row lg:gap-8 pb-3 pt-3">
+                <div className="flex w-full max-w-[280px] flex-col gap-2">
+                  <FormLabel className="text-base font-medium text-gray-700">
                     Select Source Bank
                   </FormLabel>
-                  <FormDescription className="text-12 font-normal text-gray-600">
+                  <FormDescription className="text-sm font-normal text-gray-600">
                     Select the bank account you want to transfer funds from
                   </FormDescription>
                 </div>
@@ -118,7 +118,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                       otherStyles="!w-full"
                     />
                   </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
+                  <FormMessage className="text-base text-red-500" />
                 </div>
               </div>
             </FormItem>
@@ -130,12 +130,12 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           name="name"
           render={({ field }) => (
             <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item pb-6 pt-5">
-                <div className="payment-transfer_form-content">
-                  <FormLabel className="text-14 font-medium text-gray-700">
+              <div className="flex w-full max-w-[850px] flex-col gap-3 md:flex-row lg:gap-8 pb-4 pt-3">
+                <div className="flex w-full max-w-[280px] flex-col gap-2">
+                  <FormLabel className="text-base font-medium text-gray-700">
                     Transfer Note (Optional)
                   </FormLabel>
-                  <FormDescription className="text-12 font-normal text-gray-600">
+                  <FormDescription className="text-sm font-normal text-gray-600">
                     Please provide any additional information or instructions
                     related to the transfer
                   </FormDescription>
@@ -148,18 +148,18 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
+                  <FormMessage className="text-sm text-red-500" />
                 </div>
               </div>
             </FormItem>
           )}
         />
 
-        <div className="payment-transfer_form-details">
-          <h2 className="text-18 font-semibold text-gray-900">
+        <div className="flex flex-col gap-1 border-t border-gray-200 pb-4 pt-3">
+          <h2 className="text-base font-semibold text-gray-900">
             Bank account details
           </h2>
-          <p className="text-16 font-normal text-gray-600">
+          <p className="text-base font-normal text-gray-600">
             Enter the bank account details of the recipient
           </p>
         </div>
@@ -169,8 +169,8 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           name="email"
           render={({ field }) => (
             <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item py-5">
-                <FormLabel className="text-14 w-full max-w-[280px] font-medium text-gray-700">
+              <div className="flex w-full max-w-[850px] flex-col gap-3 md:flex-row lg:gap-8 py-3">
+                <FormLabel className="text-base w-full max-w-[280px] font-medium text-gray-700">
                   Recipient&apos;s Email Address
                 </FormLabel>
                 <div className="flex w-full flex-col">
@@ -181,7 +181,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
+                  <FormMessage className="text-sm text-red-500" />
                 </div>
               </div>
             </FormItem>
@@ -190,11 +190,11 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
 
         <FormField
           control={form.control}
-          name="sharableId"
+          name="shareableId"
           render={({ field }) => (
             <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item pb-5 pt-6">
-                <FormLabel className="text-14 w-full max-w-[280px] font-medium text-gray-700">
+              <div className="flex w-full max-w-[850px] flex-col gap-3 md:flex-row lg:gap-8 pb-4 pt-3">
+                <FormLabel className="text-base w-full max-w-[280px] font-medium text-gray-700">
                   Receiver&apos;s Plaid Sharable Id
                 </FormLabel>
                 <div className="flex w-full flex-col">
@@ -205,7 +205,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
+                  <FormMessage className="text-sm text-red-500" />
                 </div>
               </div>
             </FormItem>
@@ -217,8 +217,8 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           name="amount"
           render={({ field }) => (
             <FormItem className="border-y border-gray-200">
-              <div className="payment-transfer_form-item py-5">
-                <FormLabel className="text-14 w-full max-w-[280px] font-medium text-gray-700">
+              <div className="flex w-full max-w-[850px] flex-col gap-3 md:flex-row lg:gap-8 py-3">
+                <FormLabel className="text-base w-full max-w-[280px] font-medium text-gray-700">
                   Amount
                 </FormLabel>
                 <div className="flex w-full flex-col">
@@ -229,15 +229,15 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
+                  <FormMessage className="text-sm text-red-500" />
                 </div>
               </div>
             </FormItem>
           )}
         />
 
-        <div className="payment-transfer_btn-box">
-          <Button type="submit" className="payment-transfer_btn">
+        <div className="mt-5 flex w-full max-w-[850px] gap-3 border-gray-200 py-3">
+          <Button type="submit" className="text-base w-full bg-blue-500 font-semibold text-white shadow-form !important">
             {isLoading ? (
               <>
                 <Loader2 size={20} className="animate-spin" /> &nbsp; Sending...

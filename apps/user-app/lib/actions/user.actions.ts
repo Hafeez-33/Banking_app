@@ -326,7 +326,7 @@ export const getBank = async ({ documentId }: getBankProps) => {
     const bank = await database.listDocuments(
       DATABASE_ID!,
       BANK_COLLECTION_ID!,
-      [Query.equal('$id', documentId)]
+      [Query.equal('$id', [documentId])]
       // i have made change here in [documentId]
     )
 

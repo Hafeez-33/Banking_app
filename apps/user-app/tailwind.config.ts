@@ -104,7 +104,7 @@ const config = {
             },
         },
     },
-    plugins: [require("tailwindcss")],
+    plugins: [require("tailwindcss"),],
 } satisfies Config;
 
 export default config;

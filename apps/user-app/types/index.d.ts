@@ -235,12 +235,12 @@ declare interface SiderbarProps {
   user: User;
 }
 
-// declare interface RecentTransactionsProps {
-//   accounts: Account[];
-//   transactions: Transaction[];
-//   appwriteItemId: string;
-//   page: number;
-// }
+declare interface RecentTransactionsProps {
+  accounts: Account[];
+  transactions: Transaction[];
+  appwriteItemId: string;
+  page: number;
+}
 
 declare interface TransactionHistoryTableProps {
   transactions: Transaction[];

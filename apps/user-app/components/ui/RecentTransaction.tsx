@@ -6,13 +6,6 @@ import BankInfo from "./BankInfo";
 import TransactionsTable from "./TransactionsTable";
 import { Pagination } from "./Pagination";
 
-declare interface RecentTransactionsProps {
-  accounts: Account[];
-  transactions: Transaction[];
-  appwriteItemId: string;
-  page: number;
-}
-
 const RecentTransaction = ({
   accounts,
   transactions = [],
@@ -32,14 +25,14 @@ const RecentTransaction = ({
         <h2 className="text-base md:text-2xl font-semibold text-gray-900">Recent transactions</h2>
         <Link
           href={`/transaction-history/?id=${appwriteItemId}`}
-          className="view-all-btn"
+          className="text-base rounded-lg border border-gray-300 px-4 py-2.5 font-semibold text-gray-700"
         >
           View all
         </Link>
       </header>
 
       <Tabs defaultValue={appwriteItemId} className="w-full">
-      <TabsList className="custom-scrollbar mb-8 flex w-full flex-nowrap">
+      <TabsList className="mb-3 flex w-full flex-nowrap">
           {accounts.map((account: Account) => (
             <TabsTrigger key={account.id} value={account.appwriteItemId}>
               <BankTabItem
@@ -55,7 +48,7 @@ const RecentTransaction = ({
           <TabsContent
             value={account.appwriteItemId}
             key={account.id}
-            className="space-y-4"
+            className="space-y-2"
           >
             <BankInfo 
               account={account}
