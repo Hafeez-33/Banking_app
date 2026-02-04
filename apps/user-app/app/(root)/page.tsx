@@ -13,9 +13,9 @@ declare type SearchParamProps = {
 
 const Home = async({searchParams}:SearchParamProps) => {
   const params = await searchParams;
-  const {id,page} = params;  // i have modified here
+  const {id,page} = params;  
   const currentPage = Number(page as string) || 1;
-  const loggedIn = await getLoggedInUser(); // Example user data
+  const loggedIn = await getLoggedInUser(); 
   const accounts =await getAccounts({
     userId: loggedIn?.$id
   })
