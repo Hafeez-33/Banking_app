@@ -29,6 +29,11 @@ const sidebarLinks = [
     route: "/payment-transfer",
     label: "Transfer Funds",
   },
+  {
+    imgURL: "/icons/add-money.webp",
+    route: "/add-money",
+    label: "Add Money",
+  },
 ];
 const SIdebar = ({ user }: SiderbarProps) => {
   const pathname = usePathname();
@@ -36,7 +41,7 @@ const SIdebar = ({ user }: SiderbarProps) => {
   return (
     <section className="sticky left-0 top-0 flex h-screen w-[300] flex-col justify-between border-r border-gray-200 bg-white pt-8 text-white max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px]">
       <nav className="flex flex-col gap-1">
-        <Link href={"/"} className="mb-8 flex gap-2 cursor-pointer items-center">
+        <Link href="/" className="mb-8 flex gap-2 cursor-pointer items-center">
           <Image
             src="/icons/logo.svg"
             alt="Logo"
@@ -57,7 +62,7 @@ const SIdebar = ({ user }: SiderbarProps) => {
             <Link
               className={cn(
                 "flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center xl:justify-start",
-                { "bg-blue-500 items-center": isActive }
+                { "bg-blue-500 items-center": isActive },
               )}
               href={items.route}
               key={items.label}
@@ -73,7 +78,7 @@ const SIdebar = ({ user }: SiderbarProps) => {
               <p
                 className={cn(
                   "text-base font-semibold text-black max-xl:hidden",
-                  { "!text-white": isActive }
+                  { "!text-white": isActive },
                 )}
               >
                 {items.label}
@@ -81,11 +86,11 @@ const SIdebar = ({ user }: SiderbarProps) => {
             </Link>
           );
         })}
-        
+
         <PlaidLink user={user} />
       </nav>
 
-      <Footer user={user}/>
+      <Footer user={user} />
     </section>
   );
 };

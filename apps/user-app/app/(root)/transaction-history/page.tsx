@@ -14,6 +14,7 @@ type SearchParamProps = {
 const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
   const params = await searchParams; // i have made changes here
   const { id, page } = params; // i have made changes here
+  
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
   const accounts = await getAccounts({
@@ -54,7 +55,8 @@ const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
             </h2>
             <p className="text-14 text-blue-25">{account?.data.officialName}</p>
             <p className="text-14 font-semibold tracking-[1.1px] text-white">
-              ●●●● ●●●● ●●●● {account?.data.mask}
+              ●●●● ●●●● ●●●● 8864
+              {/* {account?.data.mask} */}
             </p>
           </div>
 
@@ -67,7 +69,7 @@ const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
         </div>
 
         <section className="flex w-full flex-col gap-6">
-          <TransactionsTable transactions={currentTransactions} />
+          <TransactionsTable transactions={account?.transactions} />
           {totalPages > 1 && (
             <div className="my-4 w-full">
               <Pagination totalPages={totalPages} page={currentPage} />

@@ -19,13 +19,14 @@ const BankCard = ({
     <div className="flex flex-col">
       <Link
         href={`/transaction-history/?id=${account.appwriteItemId}`}
-        className="relative flex h-[190px] w-full max-w-[320px] justify-between rounded-[20px] border border-white bg-blue-500 shadow-creditCard backdrop-blur-[6px]"
+        className="relative flex h-[170px] w-full max-w-[340px] justify-between rounded-[20px] border border-white bg-blue-500 shadow-creditCard backdrop-blur-[6px]"
       >
         <div className="relative z-10 flex size-full max-w-[228px] flex-col justify-between rounded-l-[20px] bg-blue-500 bg-bank-gradient px-5 pb-4 pt-5">
           <div>
             <h1 className="text-base font-semibold text-white">{account.name}</h1>
             <p className="font-ibm-plex-serif font-black text-white">
-              {formatAmount(account.currentBalance)}
+              {/* {formatAmount(account.currentBalance)} */}
+              {formatAmount(account.currentBalance ?? 0)}
             </p>
           </div>
 
@@ -36,7 +37,10 @@ const BankCard = ({
             </div>
 
             <p className="text-base font-semibold tracking-[1.1px] text-white">
-              ●●●● ●●●● <span className="text-base">{account?.mask}</span>
+              ●●●● ●●●● <span className="text-base">
+                {/* {account?.mask} */}
+                8864
+                </span>
             </p>
           </article>
         </div>
@@ -62,7 +66,7 @@ const BankCard = ({
       </Link>
 
       {/* {card copu} */}
-      {showBalance && <Copy title={account?.sharableId} />}
+      {showBalance && <Copy title={account?.shareableId} />}
     </div>
   );
 };

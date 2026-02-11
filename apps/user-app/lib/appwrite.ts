@@ -6,15 +6,24 @@ import { cookies } from "next/headers";
 export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
   const session = (await cookies()).get("appwrite-session");
 
   if (!session || !session.value) {
-    throw new Error("No session");
+    // throw new Error("No session");
+    throw null;
   }
 
   client.setSession(session.value);
+
+  //i made changes
+  // if (!session || !session.value) {
+  //   return null;
+  // }
+  // if (session?.value) {
+  //   client.setSession(session.value);
+  // }
 
   return {
     get account() {
@@ -38,6 +47,6 @@ export async function createAdminClient() {
     },
     get user() {
       return new Users(client);
-    }
+    },
   };
 }

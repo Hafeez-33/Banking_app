@@ -7,12 +7,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { createTransfer } from "@/lib/actions/dwolla.actions";
+// import { createTransfer } from "@/lib/actions/dwolla.actions";
 import { createTransaction } from "@/lib/actions/transaction.actions";
-import { getBank, getBankByAccountId } from "@/lib/actions/user.actions";
-import { decryptId } from "@/lib/utils";
+// import { getBank, getBankByAccountId } from "@/lib/actions/user.actions";
+// import { decryptId } from "@/lib/utils";
 
-import { BankDropdown } from "./BankDropdown"
+//i make changes
+import { transferFunds } from "@/lib/actions/transaction.actions";
+
+import { BankDropdown } from "./BankDropdown";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -31,12 +34,16 @@ const formSchema = z.object({
   name: z.string().min(4, "Transfer note is too short"),
   amount: z.string().min(4, "Amount is too short"),
   senderBank: z.string().min(4, "Please select a valid bank account"),
-  shareableId: z.string().min(8, "Please select a valid sharable Id"),
+  // shareableId: z.string().min(8, "Please select a valid sharable Id"),
 });
 
 const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  //showing error in Ui
+  const [error, setError] = useState<string | null>(null);
+  // const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,52 +52,122 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
       email: "",
       amount: "",
       senderBank: "",
-      shareableId: "",
+      // shareableId: "",
     },
   });
 
+  // const submit = async (data: z.infer<typeof formSchema>) => {
+  //   setIsLoading(true);
+
+  //   try {
+  //     // const receiverAccountId = decryptId(data.shareableId);
+  //     // const receiverBank = await getBankByAccountId({
+  //     //   accountId: receiverAccountId,
+  //     // });
+  //     // const senderBank = await getBank({ documentId: data.senderBank });
+
+  //     // const transferParams = {
+  //     //   sourceFundingSourceUrl: senderBank.fundingSourceUrl,
+  //     //   destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
+  //     //   amount: data.amount,
+  //     // };
+  //     // // create transfer
+  //     // const transfer = await createTransfer(transferParams);
+
+  //     //i make changes
+  //     const senderBank = accounts.find(
+  //       (bank) => bank.appwriteItemId === data.senderBank,
+  //     );
+
+  //     if (!senderBank?.fundingSourceUrl) {
+  //       throw new Error("Sender bank not found");
+  //     }
+
+  //     await transferFunds({
+  //       senderFundingSourceUrl: senderBank.fundingSourceUrl,
+  //       receiverEmail: data.email,
+  //       amount: data.amount,
+  //     });
+
+  //     // create transfer transaction
+  //     if (transfer) {
+  //       const transaction = {
+  //         name: data.name,
+  //         amount: data.amount,
+  //         senderId: senderBank.userId.$id,
+  //         senderBankId: senderBank.$id,
+  //         receiverId: receiverBank.userId.$id,
+  //         receiverBankId: receiverBank.$id,
+  //         email: data.email,
+  //       };
+
+  //       const newTransaction = await createTransaction(transaction);
+
+  //       if (newTransaction) {
+  //         form.reset();
+  //         router.push("/");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Submitting create transfer request failed: ", error);
+  //   }
+
+  //   setIsLoading(false);
+  // };
+
+  // const submit = async (data: z.infer<typeof formSchema>) => {
+  //   setIsLoading(true);
+
+  //   try {
+  //     const senderBank = accounts.find(
+  //       (bank) => bank.appwriteItemId === data.senderBank,
+  //     );
+
+  //     if (!senderBank?.fundingSourceUrl) {
+  //       throw new Error("Sender bank not found");
+  //     }
+
+  //     await transferFunds({
+  //       senderFundingSourceUrl: senderBank.fundingSourceUrl,
+  //       receiverEmail: data.email,
+  //       amount: data.amount,
+  //     });
+
+  //     form.reset();
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.error("Transfer failed:", error);
+  //   }
+
+  //   setIsLoading(false);
+  // };
+
   const submit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    //i make change
+    setError(null);
 
     try {
-      const receiverAccountId = decryptId(data.shareableId);
-      const receiverBank = await getBankByAccountId({
-        accountId: receiverAccountId,
-      });
-      const senderBank = await getBank({ documentId: data.senderBank });
-
-      const transferParams = {
-        sourceFundingSourceUrl: senderBank.fundingSourceUrl,
-        destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
+      await transferFunds({
+        senderBankId: data.senderBank, // ✅ Appwrite bank document ID
+        receiverEmail: data.email,
         amount: data.amount,
-      };
-      // create transfer
-      const transfer = await createTransfer(transferParams);
+      });
 
-      // create transfer transaction
-      if (transfer) {
-        const transaction = {
-          name: data.name,
-          amount: data.amount,
-          senderId: senderBank.userId.$id,
-          senderBankId: senderBank.$id,
-          receiverId: receiverBank.userId.$id,
-          receiverBankId: receiverBank.$id,
-          email: data.email,
-        };
-
-        const newTransaction = await createTransaction(transaction);
-
-        if (newTransaction) {
-          form.reset();
-          router.push("/");
-        }
-      }
-    } catch (error) {
-      console.error("Submitting create transfer request failed: ", error);
+      form.reset();
+      router.push("/");
+    } catch (error: any) {
+      setError(error.message);
+      console.error("Transfer failed:", error);
     }
 
     setIsLoading(false);
+  };
+
+  const errorMessages: Record<string, string> = {
+    INSUFFICIENT_BALANCE: "❌ Insufficient balance. Please add funds.",
+    RECEIVER_NOT_FOUND: "❌ Receiver not found.",
+    INVALID_AMOUNT: "❌ Please enter a valid amount.",
   };
 
   return (
@@ -175,10 +252,19 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                 </FormLabel>
                 <div className="flex w-full flex-col">
                   <FormControl>
+                    {/* <Input
+                      placeholder="ex: johndoe@gmail.com"
+                      className="input-class"
+                      {...field}
+                    /> */}
                     <Input
                       placeholder="ex: johndoe@gmail.com"
                       className="input-class"
                       {...field}
+                      onChange={(e) => {
+                        setError(null); // ✅ clear error
+                        field.onChange(e); // ✅ keep react-hook-form working
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-sm text-red-500" />
@@ -188,7 +274,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="shareableId"
           render={({ field }) => (
@@ -210,7 +296,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
               </div>
             </FormItem>
           )}
-        />
+        /> */}
 
         <FormField
           control={form.control}
@@ -223,10 +309,19 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                 </FormLabel>
                 <div className="flex w-full flex-col">
                   <FormControl>
-                    <Input
+                    {/* <Input
                       placeholder="ex: 5.00"
                       className="input-class"
                       {...field}
+                    /> */}
+                    <Input
+                      placeholder="ex: johndoe@gmail.com"
+                      className="input-class"
+                      {...field}
+                      onChange={(e) => {
+                        setError(null); // ✅ clear error
+                        field.onChange(e); // ✅ keep react-hook-form working
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-sm text-red-500" />
@@ -236,8 +331,17 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
+        {error && (
+          <div className="w-full max-w-[850px] rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessages[error] ?? "❌ Transfer failed. Please try again."}
+          </div>
+        )}
+
         <div className="mt-5 flex w-full max-w-[850px] gap-3 border-gray-200 py-3">
-          <Button type="submit" className="text-base w-full bg-blue-500 font-semibold text-white shadow-form !important">
+          <Button
+            type="submit"
+            className="text-base w-full bg-blue-500 font-semibold text-white shadow-form !important"
+          >
             {isLoading ? (
               <>
                 <Loader2 size={20} className="animate-spin" /> &nbsp; Sending...
@@ -252,4 +356,4 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
   );
 };
 
-export default PaymentTransferForm
+export default PaymentTransferForm;

@@ -89,6 +89,48 @@ export const topCategoryStyles = {
     },
     icon: "/icons/shopping-bag.svg",
   },
+  Debited: {
+  bg: "bg-red-50",
+  circleBg: "bg-red-100",
+  text: {
+    main: "text-red-700",
+    count: "text-red-500",
+  },
+  progress: {
+    bg: "bg-red-100",
+    indicator: "bg-red-500",
+  },
+  icon: "/icons/money-send.svg",
+},
+
+Credited: {
+  bg: "bg-green-50",
+  circleBg: "bg-green-100",
+  text: {
+    main: "text-green-700",
+    count: "text-green-500",
+  },
+  progress: {
+    bg: "bg-green-100",
+    indicator: "bg-green-500",
+  },
+  icon: "/icons/dollar-circle.svg",
+},
+
+"Opening Balance": {
+  bg: "bg-blue-50",
+  circleBg: "bg-blue-100",
+  text: {
+    main: "text-blue-700",
+    count: "text-blue-500",
+  },
+  progress: {
+    bg: "bg-blue-100",
+    indicator: "bg-blue-500",
+  },
+  icon: "/icons/home.svg",
+},
+
 };
 
 export const transactionCategoryStyles = {
@@ -128,10 +170,22 @@ export const transactionCategoryStyles = {
     textColor: "text-[#027A48]",
     chipBackgroundColor: "bg-[#ECFDF3]",
   },
+  Travel: {
+    borderColor: "border-[#0047AB]",
+    backgroundColor: "text-blue-700",
+    textColor: "text-blue-700",
+    chipBackgroundColor: "bg-[#ECFDF3]",
+  },
   default: {
     borderColor: "",
     backgroundColor: "bg-blue-500",
     textColor: "text-blue-700",
     chipBackgroundColor: "bg-inherit",
   },
+  Deposited: {
+  borderColor: "border-green-500",
+  backgroundColor: "bg-green-500",
+  textColor: "text-green-700",
+  chipBackgroundColor: "bg-green-50",
+},
 };

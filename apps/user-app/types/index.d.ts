@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 
-// declare type SearchParamProps = {
-//   params: { [key: string]: string };
-//   searchParams: { [key: string]: string | string[] | undefined };
-// };
+declare type SearchParamProps = {
+  params: { [key: string]: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 // ========================================
 
@@ -62,6 +62,8 @@ declare type NewUserParams = {
 };
 
 declare type Account = {
+  balance(balance: any): React.ReactNode;
+  $id: Key | null | undefined;
   id: string;
   availableBalance: number;
   currentBalance: number;
@@ -72,7 +74,8 @@ declare type Account = {
   type: string;
   subtype: string;
   appwriteItemId: string;
-  sharableId: string;
+  // sharableId: string;
+  shareableId:string; //i make changes in it
 };
 
 declare type Transaction = {
@@ -92,6 +95,7 @@ declare type Transaction = {
   channel: string;
   senderBankId: string;
   receiverBankId: string;
+  status:string
 };
 
 declare type Bank = {
@@ -149,24 +153,24 @@ declare type NewDwollaCustomerParams = {
   ssn: string;
 };
 
-// declare interface CreditCardProps {
-//   account: Account;
-//   userName: string;
-//   showBalance?: boolean;
-// }
+declare interface CreditCardProps {
+  account: Account;
+  userName: string;
+  showBalance?: boolean;
+}
 
-// declare interface BankInfoProps {
-//   account: Account;
-//   appwriteItemId?: string;
-//   type: "full" | "card";
-// }
+declare interface BankInfoProps {
+  account: Account;
+  appwriteItemId?: string;
+  type: "full" | "card";
+}
 
-// declare interface HeaderBoxProps {
-//   type?: "title" | "greeting";
-//   title: string;
-//   subtext: string;
-//   user?: string;
-// }
+declare interface HeaderBoxProps {
+  type?: "title" | "greeting";
+  title: string;
+  subtext: string;
+  user?: string;
+}
 
 declare interface MobileNavProps {
   user: User;
@@ -180,25 +184,25 @@ declare interface PageHeaderProps {
   connectBank?: boolean;
 }
 
-// declare interface PaginationProps {
-//   page: number;
-//   totalPages: number;
-// }
+declare interface PaginationProps {
+  page: number;
+  totalPages: number;
+}
 
-// declare interface PlaidLinkProps {
-//   user: User;
-//   variant?: "primary" | "ghost";
-//   dwollaCustomerId?: string;
-// }
+declare interface PlaidLinkProps {
+  user: User;
+  variant?: "primary" | "ghost";
+  dwollaCustomerId?: string;
+}
 
-// declare type User = sdk.Models.Document & {
-//   accountId: string;
-//   email: string;
-//   name: string;
-//   items: string[];
-//   accessToken: string;
-//   image: string;
-// };
+declare type User = sdk.Models.Document & {
+  accountId: string;
+  email: string;
+  name: string;
+  items: string[];
+  accessToken: string;
+  image: string;
+};
 
 declare interface AuthFormProps {
   type: "sign-in" | "sign-up";
@@ -210,26 +214,26 @@ declare interface BankDropdownProps {
   otherStyles?: string;
 }
 
-// declare interface BankTabItemProps {
-//   account: Account;
-//   appwriteItemId?: string;
-// }
+declare interface BankTabItemProps {
+  account: Account;
+  appwriteItemId?: string;
+}
 
-// declare interface TotlaBalanceBoxProps {
-//   accounts: Account[];
-//   totalBanks: number;
-//   totalCurrentBalance: number;
-// }
+declare interface TotlaBalanceBoxProps {
+  accounts: Account[];
+  totalBanks: number;
+  totalCurrentBalance: number;
+}
 
-// declare interface FooterProps {
-//   user: User;
-// }
+declare interface FooterProps {
+  user: User;
+}
 
-// declare interface RightSidebarProps {
-//   user: User;
-//   transactions: Transaction[];
-//   banks: Bank[] & Account[];
-// }
+declare interface RightSidebarProps {
+  user: User;
+  transactions: Transaction[];
+  banks: Bank[] & Account[];
+}
 
 declare interface SiderbarProps {
   user: User;
@@ -247,21 +251,21 @@ declare interface TransactionHistoryTableProps {
   page: number;
 }
 
-// declare interface CategoryBadgeProps {
-//   category: string;
-// }
+declare interface CategoryBadgeProps {
+  category: string;
+}
 
 declare interface TransactionTableProps {
   transactions: Transaction[];
 }
 
-// declare interface CategoryProps {
-//   category: CategoryCount;
-// }
+declare interface CategoryProps {
+  category: CategoryCount;
+}
 
-// declare interface DoughnutChartProps {
-//   accounts: Account[];
-// }
+declare interface DoughnutChartProps {
+  accounts: Account[];
+}
 
 declare interface PaymentTransferFormProps {
   accounts: Account[];
@@ -305,37 +309,37 @@ declare interface getTransactionsByBankIdProps {
   bankId: string;
 }
 
-// declare interface signInProps {
-//   email: string;
-//   password: string;
-// }
+declare interface signInProps {
+  email: string;
+  password: string;
+}
 
-// declare interface getUserInfoProps {
-//   userId: string;
-// }
+declare interface getUserInfoProps {
+  userId: string;
+}
 
-// declare interface exchangePublicTokenProps {
-//   publicToken: string;
-//   user: User;
-// }
+declare interface exchangePublicTokenProps {
+  publicToken: string;
+  user: User;
+}
 
-// declare interface createBankAccountProps {
-//   accessToken: string;
-//   userId: string;
-//   accountId: string;
-//   bankId: string;
-//   fundingSourceUrl: string;
-//   sharableId: string;
-// }
+declare interface createBankAccountProps {
+  accessToken: string;
+  userId: string;
+  accountId: string;
+  bankId: string;
+  fundingSourceUrl: string;
+  sharableId: string;
+}
 
-// declare interface getBanksProps {
-//   userId: string;
-// }
+declare interface getBanksProps {
+  userId: string;
+}
 
-// declare interface getBankProps {
-//   documentId: string;
-// }
+declare interface getBankProps {
+  documentId: string;
+}
 
-// declare interface getBankByAccountIdProps {
-//   accountId: string;
-// }
+declare interface getBankByAccountIdProps {
+  accountId: string;
+}
