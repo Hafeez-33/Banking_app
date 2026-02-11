@@ -6,6 +6,7 @@ import { createAdminClient } from "../appwrite";
 const {
   APPWRITE_DATABASE_ID: DATABASE_ID,
   APPWRITE_TRANSACTION_COLLECTION_ID: TRANSACTION_COLLECTION_ID,
+  APPWRITE_BANK_COLLECTION_ID:BANK_COLLECTION_ID
 } = process.env;
 
 const SYSTEM_BANK_ID = "SYSTEM";
@@ -73,6 +74,49 @@ export const getBankBalance = async (bankId: string) => {
 //   return balance;
 // };
 
+// export const createOpeningBalance = async ({
+//   bankId,
+//   amount,
+// }: {
+//   bankId: string;
+//   amount: number;
+// }) => {
+//   const { database } = await createAdminClient();
+
+//   // 🔒 1️⃣ Check if opening balance already exists
+//   const existing = await database.listDocuments(
+//     process.env.APPWRITE_DATABASE_ID!,
+//     process.env.APPWRITE_TRANSACTION_COLLECTION_ID!,
+//     [
+//       Query.equal("receiverBankId", bankId),
+//       Query.equal("category", "Opening Balance"),
+//     ],
+//   );
+
+//   // ⛔ Prevent duplicate opening balance
+//   if (existing.total > 0) {
+//     console.log("Opening balance already exists for bank:", bankId);
+//     return;
+//   }
+
+//   await database.createDocument(
+//     process.env.APPWRITE_DATABASE_ID!,
+//     process.env.APPWRITE_TRANSACTION_COLLECTION_ID!,
+//     ID.unique(),
+//     {
+//       // senderBankId: null,
+//       senderBankId: "SYSTEM",
+//       receiverBankId: bankId,
+//       amount: Number(Number(amount).toFixed(2)),
+//       type: "credit",
+//       status: "success",
+//       channel: "system",
+//       category: "Opening Balance",
+//     },
+//   );
+// };
+
+
 export const createOpeningBalance = async ({
   bankId,
   amount,
@@ -82,35 +126,31 @@ export const createOpeningBalance = async ({
 }) => {
   const { database } = await createAdminClient();
 
-  // 🔒 1️⃣ Check if opening balance already exists
-  const existing = await database.listDocuments(
-    process.env.APPWRITE_DATABASE_ID!,
-    process.env.APPWRITE_TRANSACTION_COLLECTION_ID!,
-    [
-      Query.equal("receiverBankId", bankId),
-      Query.equal("category", "Opening Balance"),
-    ],
+  // 1️⃣ Update bank balance directly
+  await database.updateDocument(
+    DATABASE_ID!,
+    BANK_COLLECTION_ID!,
+    bankId,
+    {
+      balance: amount,
+    }
   );
 
-  // ⛔ Prevent duplicate opening balance
-  if (existing.total > 0) {
-    console.log("Opening balance already exists for bank:", bankId);
-    return;
-  }
-
+  // 2️⃣ Create transaction record (for history)
   await database.createDocument(
-    process.env.APPWRITE_DATABASE_ID!,
-    process.env.APPWRITE_TRANSACTION_COLLECTION_ID!,
+    DATABASE_ID!,
+    TRANSACTION_COLLECTION_ID!,
     ID.unique(),
     {
-      // senderBankId: null,
       senderBankId: "SYSTEM",
       receiverBankId: bankId,
-      amount: Number(Number(amount).toFixed(2)),
+      amount,
       type: "credit",
       status: "success",
-      channel: "system",
-      category: "Opening Balance",
-    },
+      channel: "System",
+      category: "opening balance",
+    }
   );
+
+  return { success: true };
 };

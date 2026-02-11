@@ -13,6 +13,8 @@ const AddMoney = async () => {
 
   return (
     <section className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-6 sm:p-6">
+      
+      
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl ">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Add Money</h1>

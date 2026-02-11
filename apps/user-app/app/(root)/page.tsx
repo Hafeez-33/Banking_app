@@ -7,12 +7,17 @@ import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 import RecentTransaction from "@/components/ui/RecentTransaction";
 
 //i make changes
-import { getBankBalance } from "@/lib/actions/balance.actions";
+// import { getBankBalance } from "@/lib/actions/balance.actions";
 
 declare type SearchParamProps = {
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
+
+type BankAccount = {
+  currentBalance: number;
+};
+
 
 const Home = async ({ searchParams }: SearchParamProps) => {
   const params = await searchParams;
@@ -42,57 +47,23 @@ const appwriteItemId = selectedBank?.appwriteItemId as string;
 
 const account = await getAccount({ appwriteItemId });
 
+//production
 //i make changes
-const balances = await Promise.all(
-  accountsData.map(async (bank: Account) => ({
-    ...bank,
-    balance: await getBankBalance(bank.appwriteItemId),
-  }))
-);
+// const balances = await Promise.all(
+//   accountsData.map(async (bank: Account) => ({
+//     ...bank,
+//     balance: await getBankBalance(bank.appwriteItemId),
+//   }))
+// );
 
+// const balances = accountsData;
+const balances:BankAccount[] = accountsData;
 const totalBalance = balances.reduce(
-  (sum, bank) => sum + bank.balance,
+  (sum:number, bank) => sum + (bank.currentBalance ?? 0),
   0
 );
 
-// return(
-//   <section className="flex gap-8">
 
-//   {/* MAIN CENTER */}
-//   <div className="flex-1 space-y-6">
-
-//     <HeaderBox
-//       type="greeting"
-//       title="Welcome"
-//       user={loggedIn?.firstName || "Guest"}
-//       subtext="Access and manage your account and transactions efficiently."
-//     />
-
-//     <TotalBalanceBox
-//       accounts={balances}
-//       totalBanks={balances.length}
-//       totalCurrentBalance={totalBalance}
-//     />
-
-//     <RecentTransaction
-//       accounts={accountsData}
-//       transactions={account?.transactions}
-//       appwriteItemId={appwriteItemId}
-//       page={currentPage}
-//     />
-//   </div>
-
-//   {/* RIGHT PANEL */}
-//   <div className="hidden xl:block w-[350px] flex-shrink-0">
-//     <RightSidebat
-//       user={loggedIn}
-//       transactions={account?.transactions}
-//       banks={balances.slice(0, 2)}
-//     />
-//   </div>
-
-// </section>
-// )
 
   return (
     // <section className="no-scrollbar flex w-full flex-row max-xl:max-h-screen max-xl:overflow-y-scroll">
@@ -132,3 +103,43 @@ const totalBalance = balances.reduce(
 };
 
 export default Home;
+
+
+// return(
+//   <section className="flex gap-8">
+
+//   {/* MAIN CENTER */}
+//   <div className="flex-1 space-y-6">
+
+//     <HeaderBox
+//       type="greeting"
+//       title="Welcome"
+//       user={loggedIn?.firstName || "Guest"}
+//       subtext="Access and manage your account and transactions efficiently."
+//     />
+
+//     <TotalBalanceBox
+//       accounts={balances}
+//       totalBanks={balances.length}
+//       totalCurrentBalance={totalBalance}
+//     />
+
+//     <RecentTransaction
+//       accounts={accountsData}
+//       transactions={account?.transactions}
+//       appwriteItemId={appwriteItemId}
+//       page={currentPage}
+//     />
+//   </div>
+
+//   {/* RIGHT PANEL */}
+//   <div className="hidden xl:block w-[350px] flex-shrink-0">
+//     <RightSidebat
+//       user={loggedIn}
+//       transactions={account?.transactions}
+//       banks={balances.slice(0, 2)}
+//     />
+//   </div>
+
+// </section>
+// )

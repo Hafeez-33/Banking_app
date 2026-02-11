@@ -197,6 +197,7 @@ interface createBankAccountProps {
   fundingSourceUrl: string;
   shareableId: string;
   isPrimary?: Boolean;
+  balance:number
 }
 
 export const createBankAccount = async ({
@@ -224,6 +225,7 @@ export const createBankAccount = async ({
         shareableId,
         //i make changes
         isPrimary: isPrimary ?? false,
+        balance:0
       },
     );
 
@@ -290,6 +292,17 @@ export const exchangePublicToken = async ({
     //   isPrimary: true,
     // });
 
+    //production
+    // Check if user already has banks
+    const { database } = await createAdminClient();
+
+    const existingBanks = await database.listDocuments(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      [Query.equal("userId", user.$id)],
+    );
+    const isFirstBank = existingBanks.total === 0;
+
     // 1️⃣ Create bank account
     const bank = await createBankAccount({
       userId: user.$id,
@@ -299,12 +312,22 @@ export const exchangePublicToken = async ({
       fundingSourceUrl,
       shareableId: encryptId(accountData.account_id),
       isPrimary: true,
+      balance:0
     });
 
     // 2️⃣ CREATE OPENING BALANCE (ONE TIME ONLY)
+    // await createOpeningBalance({
+    //   bankId: bank.$id,
+    //   amount: accountData.balances.current ?? 0,
+    // });
+    const baseBalance = accountData.balances.current ?? 0;
+
+    // 🎁 Add bonus only if first bank
+    const bonus = isFirstBank ? 100 : 0;
+
     await createOpeningBalance({
       bankId: bank.$id,
-      amount: accountData.balances.current ?? 0,
+      amount: baseBalance + bonus,
     });
 
     // Revalidate the path to reflect the changes

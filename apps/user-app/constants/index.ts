@@ -189,3 +189,5 @@ export const transactionCategoryStyles = {
   chipBackgroundColor: "bg-green-50",
 },
 };
+
+// export const BANK_COLLECTION_ID = process.env.APPWRITE_BANK_COLLECTION_ID;

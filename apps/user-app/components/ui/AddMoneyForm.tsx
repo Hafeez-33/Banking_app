@@ -78,7 +78,7 @@ const AddMoneyForm = ({ accounts }: any) => {
 
   {/* QUICK AMOUNT BUTTONS */}
   <div className="flex gap-3 flex-wrap">
-    {[10,25,50,100].map((amt) => (
+    {[10,25,50,100,].map((amt) => (
       <button
         key={amt}
         type="button"

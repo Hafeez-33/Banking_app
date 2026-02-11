@@ -12,6 +12,7 @@ import { getBanks } from "./user.actions";
 const {
   APPWRITE_DATABASE_ID: DATABASE_ID,
   APPWRITE_TRANSACTION_COLLECTION_ID: TRANSACTION_COLLECTION_ID,
+  APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION_ID,
 } = process.env;
 
 export const createTransaction = async (
@@ -106,6 +107,7 @@ export const getTransactionsByBankId = async ({
 
 import { getBank } from "./user.actions";
 import { getBankBalance } from "./balance.actions";
+// import { BANK_COLLECTION_ID } from "@/constants";
 
 interface TransferFundsParams {
   senderBankId: string;
@@ -215,6 +217,27 @@ export const transferFunds = async ({
     },
   );
 
+  //production
+  // 6️⃣ UPDATE SENDER BALANCE (decrease)
+  await database.updateDocument(
+    DATABASE_ID!,
+    BANK_COLLECTION_ID!,
+    senderBank.$id,
+    {
+      balance: (senderBank.balance || 0) - numericAmount,
+    },
+  );
+
+  // 7️⃣ UPDATE RECEIVER BALANCE (increase)
+  await database.updateDocument(
+    DATABASE_ID!,
+    BANK_COLLECTION_ID!,
+    receiverBank.$id,
+    {
+      balance: (receiverBank.balance || 0) + numericAmount,
+    },
+  );
+
   return { success: true };
 };
 
@@ -259,7 +282,6 @@ export const transferFunds = async ({
 //   });
 // };
 
-
 export const handleTransfer = async (payload: TransferFundsParams) => {
   try {
     await transferFunds(payload);
@@ -272,11 +294,51 @@ export const handleTransfer = async (payload: TransferFundsParams) => {
   }
 };
 
+// const SYSTEM_BANK_ID = "SYSTEM";
+//adding amount
+// export const depositFunds = async ({
+//   bankId,
+//   amount,
+// }: {
+//   bankId: string;
+//   amount: number;
+// }) => {
+//   const numericAmount = Number(amount);
 
+//   if (numericAmount <= 0) {
+//     throw new Error("Invalid amount");
+//   }
 
+//   const bank = await getBank({ documentId: bankId });
+
+//   if (!bank) {
+//     throw new Error("Bank not found");
+//   }
+
+//   const { database } = await createAdminClient();
+
+//   // Save deposit transaction
+//   await database.createDocument(
+//     DATABASE_ID!,
+//     TRANSACTION_COLLECTION_ID!,
+//     ID.unique(),
+//     {
+//       senderBankId: SYSTEM_BANK_ID,
+//       receiverBankId: bank.$id,
+//       amount: numericAmount,
+//       type: "credit",
+//       status: "success",
+//       channel: "System",
+//       category: "Deposited",
+//     }
+//   );
+
+//   return { success: true };
+// };
+
+//production
 const SYSTEM_BANK_ID = "SYSTEM";
 
-//adding amount
 export const depositFunds = async ({
   bankId,
   amount,
@@ -290,15 +352,16 @@ export const depositFunds = async ({
     throw new Error("Invalid amount");
   }
 
+  const { database } = await createAdminClient();
+
+  // 1️⃣ Get bank
   const bank = await getBank({ documentId: bankId });
 
   if (!bank) {
     throw new Error("Bank not found");
   }
 
-  const { database } = await createAdminClient();
-
-  // Save deposit transaction
+  // 2️⃣ Create deposit transaction
   await database.createDocument(
     DATABASE_ID!,
     TRANSACTION_COLLECTION_ID!,
@@ -311,10 +374,18 @@ export const depositFunds = async ({
       status: "success",
       channel: "System",
       category: "Deposited",
-    }
+    },
   );
 
-  
+  // 3️⃣ 🔥 UPDATE BANK BALANCE
+  await database.updateDocument(
+    DATABASE_ID!,
+    BANK_COLLECTION_ID!, // ⚠ make sure this constant exists
+    bank.$id,
+    {
+      balance: (bank.balance || 0) + numericAmount,
+    },
+  );
 
   return { success: true };
 };

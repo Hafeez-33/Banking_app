@@ -43,14 +43,14 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
             throw new Error("Account data not found.");
           }
 
-          const balance = await getBankBalance(bank.$id);
-
+          // const balance = await getBankBalance(bank.$id);
+          const balance = bank.balance ?? 0;
           const account = {
             id: accountData.account_id,
             //i make changes
             // availableBalance: accountData.balances.available!,
             // currentBalance: accountData.balances.current!,
-            currentBalance: balance,
+            currentBalance: bank.balance,
             institutionId: institution.institution_id,
             name: accountData.name,
             officialName: accountData.official_name,
@@ -165,7 +165,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
           name: tx.category === "opening balance" ? "Bank" : "Bank Transfer",
           amount: tx.amount,
           date: tx.$createdAt,
-          paymentChannel: tx.channel,
+          paymentChannel: tx.channel ?? "Internal",
           // category: tx.category,
           category: displayCategory,
           // type: tx.senderBankId === bank.$id ? "debit" : "credit",
@@ -239,17 +239,48 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     //     "Other",
     // }));
 
+    // const plaidTransactions = transactions
+    //   .filter((tx: any) => tx.paymentChannel !== "dwolla")
+    //   .map((tx: any) => {
+    //     let derivedCategory = "Other";
+
+    //     if (tx.paymentChannel === "online") {
+    //       derivedCategory = "Online";
+    //     } else if (tx.paymentChannel === "in store") {
+    //       derivedCategory = "Shopping";
+    //     } else if (tx.paymentChannel === "other") {
+    //       derivedCategory = "Other";
+    //     }
+
+    //     return {
+    //       id: tx.id,
+    //       name: tx.name,
+    //       amount: tx.amount,
+    //       date: tx.date,
+    //       paymentChannel: tx.paymentChannel ?? "Bank",
+    //       type: tx.amount < 0 ? "debit" : "credit",
+    //       status: tx.pending ? "processing" : "success",
+    //       category: derivedCategory,
+    //     };
+    //   });
+
     const plaidTransactions = transactions
       .filter((tx: any) => tx.paymentChannel !== "dwolla")
       .map((tx: any) => {
+        let channel = "Bank";
+
+        if (tx.paymentChannel === "in store") {
+          channel = "Card";
+        } else if (tx.paymentChannel === "online") {
+          channel = "Online";
+        } else if (tx.paymentChannel === "other") {
+          channel = "Other";
+        }
+
         let derivedCategory = "Other";
 
-        if (tx.paymentChannel === "online") {
-          derivedCategory = "Online";
-        } else if (tx.paymentChannel === "in store") {
-          derivedCategory = "Shopping";
-        } else if (tx.paymentChannel === "other") {
-          derivedCategory = "Other";
+        if (tx.personal_finance_category?.primary) {
+          derivedCategory = tx.personal_finance_category.primary;
         }
 
         return {
@@ -257,7 +288,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
           name: tx.name,
           amount: tx.amount,
           date: tx.date,
-          paymentChannel: tx.paymentChannel ?? "Bank",
+          paymentChannel: channel, // ✅ normalized
           type: tx.amount < 0 ? "debit" : "credit",
           status: tx.pending ? "processing" : "success",
           category: derivedCategory,
@@ -268,7 +299,9 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       throw new Error("Account data not found.");
     }
 
-    const balance = await getBankBalance(bank.$id);
+    //production
+    // const balance = await getBankBalance(bank.$id);
+    const balance = bank.balance ?? 0;
 
     const account = {
       id: accountData.account_id,

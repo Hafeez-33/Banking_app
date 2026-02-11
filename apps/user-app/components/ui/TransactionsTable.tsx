@@ -140,7 +140,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
               </TableCell>
 
               <TableCell className="pl-2 pr-10 capitalize min-w-24">
-                {trans.channel}
+                {trans.paymentChannel}
               </TableCell>
 
               <TableCell className="pl-2 pr-10 max-md:hidden">

@@ -99,6 +99,7 @@ declare type Transaction = {
 };
 
 declare type Bank = {
+  balance: number;
   $id: string;
   accountId: string;
   bankId: string;
