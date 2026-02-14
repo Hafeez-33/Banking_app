@@ -107,6 +107,16 @@ declare type Bank = {
   fundingSourceUrl: string;
   userId: string;
   shareableId: string;
+
+  //production
+  name: string;
+  officialName: string;
+  mask: string;
+  type: string;
+  subtype: string;
+  institutionName: string;
+
+  isPrimary: boolean;
 };
 
 declare type AccountTypes =

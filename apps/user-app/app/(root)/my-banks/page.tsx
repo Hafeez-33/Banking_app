@@ -1,3 +1,6 @@
+
+export const dynamic = "force-dynamic";
+
 import BankCard from '@/components/ui/BankCard';
 import HeaderBox from '@/components/ui/HeaderBox'
 import { getAccounts } from '@/lib/actions/bank.actions';

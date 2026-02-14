@@ -25,7 +25,8 @@ const AddMoneyForm = ({ accounts }: any) => {
         amount: Number(amount),
       });
 
-      router.push("/");
+      // router.push("/");
+      router.push("/dashboard")
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     }

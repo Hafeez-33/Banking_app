@@ -50,7 +50,7 @@ const SIdebar = ({ user }: SiderbarProps) => {
             className="size-[20px] max-xl:size-14"
           />
           <h1 className="2xl:text-26 font-ibm-plex-serif text-[26px] font-bold text-black max-xl:hidden">
-            Horizon
+            Rupy Bank
           </h1>
         </Link>
 

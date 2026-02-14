@@ -80,7 +80,8 @@ const Authform = ({ type }: { type: string }) => {
           password: data.password,
         });
         if (response) {
-          router.push("/");
+          // router.push("/");
+          router.push("/dashboard");
         }
       }
     } catch (error) {
@@ -99,7 +100,7 @@ const Authform = ({ type }: { type: string }) => {
         >
           <Image src="/icons/logo.svg" alt="Horizon logo" width={34} height={34} />
           <h1 className="text-2xl font-ibm-plex-serif font-bold text-black">
-            Horizon
+            Rupy Bank
           </h1>
         </Link>
 

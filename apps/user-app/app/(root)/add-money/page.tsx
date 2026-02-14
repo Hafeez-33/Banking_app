@@ -1,3 +1,6 @@
+
+export const dynamic = "force-dynamic";
+
 import AddMoneyForm from "@/components/ui/AddMoneyForm";
 import { getAccounts } from "@/lib/actions/bank.actions";
 import { getLoggedInUser } from "@/lib/actions/user.actions";

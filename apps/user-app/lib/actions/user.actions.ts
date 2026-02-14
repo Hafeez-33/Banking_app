@@ -1,5 +1,4 @@
 "use server";
-
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { cookies } from "next/headers";
@@ -14,6 +13,7 @@ import { plaidClient } from "../plaid";
 import { revalidatePath } from "next/cache";
 import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
 import { createOpeningBalance } from "./balance.actions";
+import { getInstitution } from "./bank.actions";
 
 const {
   APPWRITE_DATABASE_ID: DATABASE_ID,
@@ -197,7 +197,10 @@ interface createBankAccountProps {
   fundingSourceUrl: string;
   shareableId: string;
   isPrimary?: Boolean;
-  balance:number
+  balance: number;
+  //production
+  accountData: any,
+  institution: any
 }
 
 export const createBankAccount = async ({
@@ -208,9 +211,29 @@ export const createBankAccount = async ({
   fundingSourceUrl,
   shareableId,
   isPrimary,
+  accountData,
+  institution
 }: createBankAccountProps) => {
   try {
     const { database } = await createAdminClient();
+
+    //production
+    // const bankAccount = await database.createDocument(
+    //   DATABASE_ID!,
+    //   BANK_COLLECTION_ID!,
+    //   ID.unique(),
+    //   {
+    //     userId,
+    //     bankId,
+    //     accountId,
+    //     accessToken,
+    //     fundingSourceUrl,
+    //     shareableId,
+    //     //i make changes
+    //     isPrimary: isPrimary ?? false,
+    //     balance:0
+    //   },
+    // );
 
     const bankAccount = await database.createDocument(
       DATABASE_ID!,
@@ -223,9 +246,14 @@ export const createBankAccount = async ({
         accessToken,
         fundingSourceUrl,
         shareableId,
-        //i make changes
+        balance: 0,
+        name: accountData.name,
+        officialName: accountData.official_name,
+        mask: accountData.mask,
+        type: accountData.type,
+        subtype: accountData.subtype,
+        institutionName: institution.name,
         isPrimary: isPrimary ?? false,
-        balance:0
       },
     );
 
@@ -254,6 +282,12 @@ export const exchangePublicToken = async ({
     });
 
     const accountData = accountsResponse.data.accounts[0];
+
+    //production
+    const institution = await getInstitution({
+  institutionId: accountsResponse.data.item.institution_id!,
+});
+
 
     if (!accountData) {
       throw new Error("No account data found.");
@@ -312,7 +346,9 @@ export const exchangePublicToken = async ({
       fundingSourceUrl,
       shareableId: encryptId(accountData.account_id),
       isPrimary: true,
-      balance:0
+      balance: 0,
+      accountData,
+      institution
     });
 
     // 2️⃣ CREATE OPENING BALANCE (ONE TIME ONLY)
@@ -380,22 +416,25 @@ export const getBank = async ({ documentId }: getBankProps) => {
 
     const { database } = await createAdminClient();
 
-    const bank = await database.listDocuments(
+    const bank = await database.getDocument(
       DATABASE_ID!,
       BANK_COLLECTION_ID!,
       //i made changes
-      [Query.equal("$id", documentId)],
+      // [Query.equal("$id", documentId)],
+      documentId
       // i have made change here in [documentId]
     );
 
     //i have made change here
-    if (!bank.documents.length) {
-      throw new Error("Bank document not found");
-    }
+    // if (!bank.documents.length) {
+    //   throw new Error("Bank document not found");
+    // }
 
-    return parseStringify(bank.documents[0]);
+    // return parseStringify(bank.documents[0]);
+    return parseStringify(bank);
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 

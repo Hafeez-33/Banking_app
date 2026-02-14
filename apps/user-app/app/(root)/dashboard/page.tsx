@@ -1,3 +1,7 @@
+
+//production
+export const dynamic = "force-dynamic";
+
 import TotalBalanceBox from "@/components/ui/TotalBalanceBox";
 import HeaderBox from "@/components/ui/HeaderBox";
 import React from "react";
@@ -6,6 +10,8 @@ import { getLoggedInUser } from "@/lib/actions/user.actions";
 import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 import RecentTransaction from "@/components/ui/RecentTransaction";
 
+import { redirect } from "next/navigation";
+// import { getLoggedInUser } from "@/lib/actions/user.actions";
 //i make changes
 // import { getBankBalance } from "@/lib/actions/balance.actions";
 
@@ -14,9 +20,9 @@ declare type SearchParamProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-type BankAccount = {
-  currentBalance: number;
-};
+// type BankAccount = {
+//   currentBalance: number;
+// };
 
 
 const Home = async ({ searchParams }: SearchParamProps) => {
@@ -29,6 +35,10 @@ const Home = async ({ searchParams }: SearchParamProps) => {
     userId: loggedIn?.$id,
   });
 
+  //production
+  if(!loggedIn){
+    redirect("/sign-in");
+  }
   if (!accounts) return null;
 
   const accountsData = accounts?.data;
@@ -57,12 +67,14 @@ const account = await getAccount({ appwriteItemId });
 // );
 
 // const balances = accountsData;
-const balances:BankAccount[] = accountsData;
-const totalBalance = balances.reduce(
-  (sum:number, bank) => sum + (bank.currentBalance ?? 0),
-  0
-);
+// production
+// const balances = accountsData;
+// const totalBalance = balances.reduce(
+//   (sum:number, bank:any) => sum + (bank.currentBalance ?? 0),
+//   0
+// );
 
+const totalBalance = accounts?.totalCurrentBalance ?? 0;
 
 
   return (
@@ -77,9 +89,15 @@ const totalBalance = balances.reduce(
             subtext="Access your account and manage your transctions efficiently."
           />
 
-          <TotalBalanceBox
+          {/* //production */}
+          {/* <TotalBalanceBox
             accounts={balances}
             totalBanks={balances.length}
+            totalCurrentBalance={totalBalance}
+          /> */}
+          <TotalBalanceBox
+            accounts={accounts.data}
+            totalBanks={accounts.totalBanks}
             totalCurrentBalance={totalBalance}
           />
         </header>
@@ -95,51 +113,11 @@ const totalBalance = balances.reduce(
       <RightSidebat
         user={loggedIn}
         transactions={account?.transactions}
-        // banks={accountsData?.slice(0, 2)}
-        banks={balances.slice(0,2)}
+        banks={accounts.data.slice(0, 2)}
+        // banks={balances.slice(0,2)}
       />
     </section>
   );
 };
 
 export default Home;
-
-
-// return(
-//   <section className="flex gap-8">
-
-//   {/* MAIN CENTER */}
-//   <div className="flex-1 space-y-6">
-
-//     <HeaderBox
-//       type="greeting"
-//       title="Welcome"
-//       user={loggedIn?.firstName || "Guest"}
-//       subtext="Access and manage your account and transactions efficiently."
-//     />
-
-//     <TotalBalanceBox
-//       accounts={balances}
-//       totalBanks={balances.length}
-//       totalCurrentBalance={totalBalance}
-//     />
-
-//     <RecentTransaction
-//       accounts={accountsData}
-//       transactions={account?.transactions}
-//       appwriteItemId={appwriteItemId}
-//       page={currentPage}
-//     />
-//   </div>
-
-//   {/* RIGHT PANEL */}
-//   <div className="hidden xl:block w-[350px] flex-shrink-0">
-//     <RightSidebat
-//       user={loggedIn}
-//       transactions={account?.transactions}
-//       banks={balances.slice(0, 2)}
-//     />
-//   </div>
-
-// </section>
-// )

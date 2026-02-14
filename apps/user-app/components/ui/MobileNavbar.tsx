@@ -60,7 +60,7 @@ const MobileNavbar = ({ user }: MobileNavProps) => {
           >
             <Image src="/icons/logo.svg" alt="Logo" width={34} height={34} />
             <h1 className="text-2xl font-ibm-plex-serif font-bold text-black">
-              Horizon
+              Rupy Bank
             </h1>
           </Link>
 

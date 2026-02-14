@@ -28,6 +28,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -45,6 +46,10 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
   const [error, setError] = useState<string | null>(null);
   // const [loading, setLoading] = useState(false);
 
+  //production
+  const [availableBalance, setAvailableBalance] = useState<number>(0);
+  const [insufficient, setInsufficient] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +60,17 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
       // shareableId: "",
     },
   });
+
+  //production
+  useEffect(() => {
+    const selected = accounts.find(
+      (bank: any) => bank.appwriteItemId === form.watch("senderBank"),
+    );
+
+    if (selected) {
+      setAvailableBalance(selected.currentBalance ?? 0);
+    }
+  }, [form.watch("senderBank"), accounts]);
 
   // const submit = async (data: z.infer<typeof formSchema>) => {
   //   setIsLoading(true);
@@ -155,9 +171,23 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
       });
 
       form.reset();
-      router.push("/");
+      // router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
-      setError(error.message);
+      // setError(error.message);
+      // console.error("Transfer failed:", error);
+      try {
+        const parsed = JSON.parse(error.message);
+
+        if (parsed.code === "INSUFFICIENT_BALANCE") {
+          setInsufficient(true);
+          return;
+        }
+
+        setError(parsed.code);
+      } catch {
+        setError("UNKNOWN_ERROR");
+      }
       console.error("Transfer failed:", error);
     }
 
@@ -315,12 +345,21 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                       {...field}
                     /> */}
                     <Input
-                      placeholder="ex: johndoe@gmail.com"
-                      className="input-class"
+                      placeholder="ex: 50.00"
+                      // className="input-class"
+                      className={`input-class ${insufficient ? "border-red-500" : ""}`}
                       {...field}
                       onChange={(e) => {
+                        const value = Number(e.target.value);
                         setError(null); // ✅ clear error
                         field.onChange(e); // ✅ keep react-hook-form working
+
+                        //production
+                        if (value > availableBalance) {
+                          setInsufficient(true);
+                        } else {
+                          setInsufficient(false);
+                        }
                       }}
                     />
                   </FormControl>
@@ -338,9 +377,19 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
         )}
 
         <div className="mt-5 flex w-full max-w-[850px] gap-3 border-gray-200 py-3">
-          <Button
+          {/* <Button
             type="submit"
             className="text-base w-full bg-blue-500 font-semibold text-white shadow-form !important"
+          > */}
+          {/* production */}
+          <Button
+            type="submit"
+            disabled={isLoading || insufficient}
+            className={`text-base w-full font-semibold text-white shadow-form transition-all ${
+              insufficient
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
           >
             {isLoading ? (
               <>

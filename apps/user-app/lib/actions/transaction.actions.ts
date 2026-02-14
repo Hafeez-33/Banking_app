@@ -15,6 +15,8 @@ const {
   APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION_ID,
 } = process.env;
 
+import { revalidatePath } from "next/cache";
+
 export const createTransaction = async (
   transaction: CreateTransactionProps,
 ) => {
@@ -114,132 +116,137 @@ interface TransferFundsParams {
   receiverEmail: string;
   amount: string;
 }
+//production
 
-export const transferFunds = async ({
-  senderBankId,
-  receiverEmail,
-  amount,
-}: TransferFundsParams) => {
-  const numericAmount = Number(amount);
+// export const transferFunds = async ({
+//   senderBankId,
+//   receiverEmail,
+//   amount,
+// }: TransferFundsParams) => {
+//   const numericAmount = Number(amount);
 
-  if (Number.isNaN(numericAmount) || numericAmount <= 0) {
-    throw new Error("Invalid transfer amount");
-  }
+//   if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+//     throw new Error("Invalid transfer amount");
+//   }
 
-  // 1️⃣ Sender bank
-  const senderBank = await getBank({ documentId: senderBankId });
-  if (!senderBank?.fundingSourceUrl) {
-    throw new Error("Sender bank not found");
-  }
+//   // 1️⃣ Sender bank
+//   const senderBank = await getBank({ documentId: senderBankId });
+//   if (!senderBank?.fundingSourceUrl) {
+//     throw new Error("Sender bank not found");
+//   }
 
-  // 2️⃣ Receiver
-  const receiver = await getUserByEmail(receiverEmail);
-  if (!receiver) {
-    throw new Error("Receiver not found");
-  }
+//   // 2️⃣ Receiver
+//   const receiver = await getUserByEmail(receiverEmail);
+//   if (!receiver) {
+//     throw new Error("Receiver not found");
+//   }
 
-  // 3️⃣ Receiver banks (robust logic)
-  const banks = await getBanks({ userId: receiver.id });
+//   // 3️⃣ Receiver banks (robust logic)
+//   const banks = await getBanks({ userId: receiver.id });
 
-  // console.log("Receiver email:", receiverEmail);
-  // console.log("Receiver userId:", receiver.userId);
-  // console.log("Banks found:", banks);
+//   // console.log("Receiver email:", receiverEmail);
+//   // console.log("Receiver userId:", receiver.userId);
+//   // console.log("Banks found:", banks);
 
-  if (!banks || banks.length === 0) {
-    throw new Error("Receiver has no banks");
-  }
+//   if (!banks || banks.length === 0) {
+//     throw new Error("Receiver has no banks");
+//   }
 
-  const receiverBank = banks.find((b: any) => b.isPrimary === true) ?? banks[0];
+//   const receiverBank = banks.find((b: any) => b.isPrimary === true) ?? banks[0];
 
-  if (!receiverBank?.fundingSourceUrl) {
-    throw new Error("Receiver has no linked bank");
-  }
+//   if (!receiverBank?.fundingSourceUrl) {
+//     throw new Error("Receiver has no linked bank");
+//   }
 
-  console.log("SOURCE:", senderBank.fundingSourceUrl);
-  console.log("DEST:", receiverBank.fundingSourceUrl);
+//   console.log("SOURCE:", senderBank.fundingSourceUrl);
+//   console.log("DEST:", receiverBank.fundingSourceUrl);
 
-  // 1️⃣ Get sender balance
-  const senderBalance = await getBankBalance(senderBank.$id);
+//   // 1️⃣ Get sender balance
+//   const senderBalance = await getBankBalance(senderBank.$id);
 
-  // 2️⃣ Prevent overdraft
-  if (senderBalance < numericAmount) {
-    throw new Error("INSUFFICIENT_BALANCE");
-  }
+//   // 2️⃣ Prevent overdraft
+//   if (senderBalance < numericAmount) {
+//     throw new Error("INSUFFICIENT_BALANCE");
+//   }
 
-  // 4️⃣ Dwolla transfer
-  // return await createTransfer({
-  //   sourceFundingSourceUrl: senderBank.fundingSourceUrl,
-  //   destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
-  //   amount,
-  // });
-  const transfer = await createTransfer({
-    sourceFundingSourceUrl: senderBank.fundingSourceUrl,
-    destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
-    amount: numericAmount.toFixed(2),
-  });
+//   // 4️⃣ Dwolla transfer
+//   // return await createTransfer({
+//   //   sourceFundingSourceUrl: senderBank.fundingSourceUrl,
+//   //   destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
+//   //   amount,
+//   // });
+//   const transfer = await createTransfer({
+//     sourceFundingSourceUrl: senderBank.fundingSourceUrl,
+//     destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
+//     amount: numericAmount.toFixed(2),
+//   });
 
-  // 5️⃣ Save transaction in Appwrite
-  const { database } = await createAdminClient();
+//   // 5️⃣ Save transaction in Appwrite
+//   const { database } = await createAdminClient();
 
-  // Save sender transaction (debit)
-  await database.createDocument(
-    DATABASE_ID!,
-    TRANSACTION_COLLECTION_ID!,
-    ID.unique(),
-    {
-      senderBankId: senderBank.$id,
-      receiverBankId: receiverBank.$id,
-      amount: numericAmount,
-      type: "debit",
-      status: "success",
-      channel: "Dwolla",
-      category: "Transfer",
-      dwollaTransferId: transfer,
-      // date: new Date(),
-    },
-  );
+//   // Save sender transaction (debit)
+//   await database.createDocument(
+//     DATABASE_ID!,
+//     TRANSACTION_COLLECTION_ID!,
+//     ID.unique(),
+//     {
+//       senderBankId: senderBank.$id,
+//       receiverBankId: receiverBank.$id,
+//       amount: numericAmount,
+//       type: "debit",
+//       status: "success",
+//       channel: "Dwolla",
+//       category: "Transfer",
+//       dwollaTransferId: transfer,
+//       // date: new Date(),
+//     },
+//   );
 
-  // Save receiver transaction (credit)
-  await database.createDocument(
-    DATABASE_ID!,
-    TRANSACTION_COLLECTION_ID!,
-    ID.unique(),
-    {
-      senderBankId: senderBank.$id,
-      receiverBankId: receiverBank.$id,
-      amount: numericAmount,
-      type: "credit",
-      status: "success",
-      channel: "Dwolla",
-      category: "Transfer",
-      dwollaTransferId: transfer,
-      // date: new Date(),
-    },
-  );
+//   // Save receiver transaction (credit)
+//   await database.createDocument(
+//     DATABASE_ID!,
+//     TRANSACTION_COLLECTION_ID!,
+//     ID.unique(),
+//     {
+//       senderBankId: senderBank.$id,
+//       receiverBankId: receiverBank.$id,
+//       amount: numericAmount,
+//       type: "credit",
+//       status: "success",
+//       channel: "Dwolla",
+//       category: "Transfer",
+//       dwollaTransferId: transfer,
+//       // date: new Date(),
+//     },
+//   );
 
-  //production
-  // 6️⃣ UPDATE SENDER BALANCE (decrease)
-  await database.updateDocument(
-    DATABASE_ID!,
-    BANK_COLLECTION_ID!,
-    senderBank.$id,
-    {
-      balance: (senderBank.balance || 0) - numericAmount,
-    },
-  );
+//   //production
+//   // 6️⃣ UPDATE SENDER BALANCE (decrease)
+//   await database.updateDocument(
+//     DATABASE_ID!,
+//     BANK_COLLECTION_ID!,
+//     senderBank.$id,
+//     {
+//       balance: (senderBank.balance || 0) - numericAmount,
+//     },
+//   );
 
-  // 7️⃣ UPDATE RECEIVER BALANCE (increase)
-  await database.updateDocument(
-    DATABASE_ID!,
-    BANK_COLLECTION_ID!,
-    receiverBank.$id,
-    {
-      balance: (receiverBank.balance || 0) + numericAmount,
-    },
-  );
+//   // 7️⃣ UPDATE RECEIVER BALANCE (increase)
+//   await database.updateDocument(
+//     DATABASE_ID!,
+//     BANK_COLLECTION_ID!,
+//     receiverBank.$id,
+//     {
+//       balance: (receiverBank.balance || 0) + numericAmount,
+//     },
+//   );
 
-  return { success: true };
-};
+//    revalidatePath("/");
+//    revalidatePath("/my-banks");
+//    revalidatePath("/transaction-history");
+
+//   return { success: true };
+// };
 
 // export const transferFunds = async ({
 //   senderBankId,
@@ -280,6 +287,324 @@ export const transferFunds = async ({
 //     destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
 //     amount,
 //   });
+// };
+
+//main
+export const transferFunds = async ({
+  senderBankId,
+  receiverEmail,
+  amount,
+}: TransferFundsParams) => {
+  const numericAmount = Number(amount);
+
+  if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+    throw new Error("Invalid transfer amount");
+  }
+
+  const { database } = await createAdminClient();
+
+  // 1️⃣ Get sender bank
+  const senderBank = await getBank({ documentId: senderBankId });
+  if (!senderBank?.fundingSourceUrl) {
+    throw new Error("Sender bank not found");
+  }
+
+  // 2️⃣ Get receiver user
+  const receiver = await getUserByEmail(receiverEmail);
+  if (!receiver) {
+    throw new Error("Receiver not found");
+  }
+
+  // 3️⃣ Get receiver bank
+  const banks = await getBanks({ userId: receiver.id });
+  if (!banks || banks.length === 0) {
+    throw new Error("Receiver has no banks");
+  }
+
+  const receiverBank = banks.find((b: any) => b.isPrimary === true) ?? banks[0];
+
+  if (!receiverBank?.fundingSourceUrl) {
+    throw new Error("Receiver has no linked bank");
+  }
+
+  // 4️⃣ Prevent overdraft
+  const senderBalance = senderBank.balance ?? 0;
+
+  if (senderBalance < numericAmount) {
+    // throw new Error("INSUFFICIENT_BALANCE");
+    throw new Error(
+      JSON.stringify({
+        code: "INSUFFICIENT_BALANCE",
+        message: "You don’t have enough balance to complete this transfer.",
+      }),
+    );
+  }
+
+  // =========================================================
+  // 🔥 STEP 1 — CREATE TRANSACTIONS (PROCESSING STATE)
+  // =========================================================
+
+  const senderTx = await database.createDocument(
+    DATABASE_ID!,
+    TRANSACTION_COLLECTION_ID!,
+    ID.unique(),
+    {
+      senderBankId: senderBank.$id,
+      receiverBankId: receiverBank.$id,
+      amount: numericAmount,
+      type: "debit",
+      status: "processing", // 👈 optimistic
+      channel: "Dwolla",
+      category: "Transfer",
+    },
+  );
+
+  const receiverTx = await database.createDocument(
+    DATABASE_ID!,
+    TRANSACTION_COLLECTION_ID!,
+    ID.unique(),
+    {
+      senderBankId: senderBank.$id,
+      receiverBankId: receiverBank.$id,
+      amount: numericAmount,
+      type: "credit",
+      status: "processing",
+      channel: "Dwolla",
+      category: "Transfer",
+    },
+  );
+
+  // =========================================================
+  // 🔥 STEP 2 — UPDATE BALANCES IMMEDIATELY (INSTANT UI)
+  // =========================================================
+
+  await database.updateDocument(
+    DATABASE_ID!,
+    BANK_COLLECTION_ID!,
+    senderBank.$id,
+    {
+      balance: senderBalance - numericAmount,
+    },
+  );
+
+  await database.updateDocument(
+    DATABASE_ID!,
+    BANK_COLLECTION_ID!,
+    receiverBank.$id,
+    {
+      balance: (receiverBank.balance ?? 0) + numericAmount,
+    },
+  );
+
+  // =========================================================
+  // 🔥 STEP 3 — CALL DWOLLA (EXTERNAL API)
+  // =========================================================
+
+  try {
+    const transfer = await createTransfer({
+      sourceFundingSourceUrl: senderBank.fundingSourceUrl,
+      destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
+      amount: numericAmount.toFixed(2),
+    });
+
+    // =========================================================
+    // 🔥 STEP 4 — UPDATE STATUS TO SUCCESS
+    // =========================================================
+
+    await database.updateDocument(
+      DATABASE_ID!,
+      TRANSACTION_COLLECTION_ID!,
+      senderTx.$id,
+      {
+        status: "success",
+        dwollaTransferId: transfer,
+      },
+    );
+
+    await database.updateDocument(
+      DATABASE_ID!,
+      TRANSACTION_COLLECTION_ID!,
+      receiverTx.$id,
+      {
+        status: "success",
+        dwollaTransferId: transfer,
+      },
+    );
+  } catch (error) {
+    console.error("Dwolla transfer failed:", error);
+
+    // ❌ Rollback balances if Dwolla fails
+
+    await database.updateDocument(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      senderBank.$id,
+      {
+        balance: senderBalance,
+      },
+    );
+
+    await database.updateDocument(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      receiverBank.$id,
+      {
+        balance: receiverBank.balance ?? 0,
+      },
+    );
+
+    // Update transaction status to failed
+    await database.updateDocument(
+      DATABASE_ID!,
+      TRANSACTION_COLLECTION_ID!,
+      senderTx.$id,
+      { status: "failed" },
+    );
+
+    await database.updateDocument(
+      DATABASE_ID!,
+      TRANSACTION_COLLECTION_ID!,
+      receiverTx.$id,
+      { status: "failed" },
+    );
+
+    throw new Error("TRANSFER_FAILED");
+  }
+
+  // =========================================================
+  // 🔥 STEP 5 — REVALIDATE PAGES
+  // =========================================================
+
+  // revalidatePath("/");
+  revalidatePath("/dashboard");
+  revalidatePath("/my-banks");
+  revalidatePath("/transaction-history");
+
+  return { success: true };
+};
+
+// export const transferFunds = async ({
+//   senderBankId,
+//   receiverEmail,
+//   amount,
+// }: TransferFundsParams) => {
+//   const numericAmount = Number(amount);
+
+//   if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+//     throw new Error("Invalid transfer amount");
+//   }
+
+//   // 1️⃣ Fetch sender bank + receiver in parallel
+//   const [senderBank, receiver] = await Promise.all([
+//     getBank({ documentId: senderBankId }),
+//     getUserByEmail(receiverEmail),
+//   ]);
+
+//   if (!senderBank?.fundingSourceUrl) {
+//     throw new Error("Sender bank not found");
+//   }
+
+//   if (!receiver) {
+//     throw new Error("Receiver not found");
+//   }
+
+//   // 2️⃣ Fetch receiver banks + sender balance in parallel
+//   const [receiverBanks, senderBalance] = await Promise.all([
+//     getBanks({ userId: receiver.id }),
+//     getBankBalance(senderBank.$id),
+//   ]);
+
+//   if (!receiverBanks || receiverBanks.length === 0) {
+//     throw new Error("Receiver has no banks");
+//   }
+
+//   const receiverBank =
+//     receiverBanks.find((b: any) => b.isPrimary === true) ??
+//     receiverBanks[0];
+
+//   if (!receiverBank?.fundingSourceUrl) {
+//     throw new Error("Receiver has no linked bank");
+//   }
+
+//   // 3️⃣ Prevent overdraft BEFORE calling Dwolla
+//   if (senderBalance < numericAmount) {
+//     throw new Error("INSUFFICIENT_BALANCE");
+//   }
+
+//   // 4️⃣ Create Dwolla transfer
+//   const transfer = await createTransfer({
+//     sourceFundingSourceUrl: senderBank.fundingSourceUrl,
+//     destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
+//     amount: numericAmount.toFixed(2),
+//   });
+
+//   const { database } = await createAdminClient();
+
+//   // 5️⃣ Save transactions + update balances in parallel
+//   await Promise.all([
+
+//     // Sender transaction (debit)
+//     database.createDocument(
+//       DATABASE_ID!,
+//       TRANSACTION_COLLECTION_ID!,
+//       ID.unique(),
+//       {
+//         senderBankId: senderBank.$id,
+//         receiverBankId: receiverBank.$id,
+//         amount: numericAmount,
+//         type: "debit",
+//         status: "success",
+//         channel: "Dwolla",
+//         category: "Transfer",
+//         dwollaTransferId: transfer,
+//       }
+//     ),
+
+//     // Receiver transaction (credit)
+//     database.createDocument(
+//       DATABASE_ID!,
+//       TRANSACTION_COLLECTION_ID!,
+//       ID.unique(),
+//       {
+//         senderBankId: senderBank.$id,
+//         receiverBankId: receiverBank.$id,
+//         amount: numericAmount,
+//         type: "credit",
+//         status: "success",
+//         channel: "Dwolla",
+//         category: "Transfer",
+//         dwollaTransferId: transfer,
+//       }
+//     ),
+
+//     // Update sender balance
+//     database.updateDocument(
+//       DATABASE_ID!,
+//       BANK_COLLECTION_ID!,
+//       senderBank.$id,
+//       {
+//         balance: (senderBank.balance || 0) - numericAmount,
+//       }
+//     ),
+
+//     // Update receiver balance
+//     database.updateDocument(
+//       DATABASE_ID!,
+//       BANK_COLLECTION_ID!,
+//       receiverBank.$id,
+//       {
+//         balance: (receiverBank.balance || 0) + numericAmount,
+//       }
+//     ),
+
+//   ]);
+
+//   // 6️⃣ Revalidate pages (NO await)
+//   revalidatePath("/");
+//   revalidatePath("/my-banks");
+//   revalidatePath("/transaction-history");
+
+//   return { success: true };
 // };
 
 export const handleTransfer = async (payload: TransferFundsParams) => {
@@ -386,6 +711,12 @@ export const depositFunds = async ({
       balance: (bank.balance || 0) + numericAmount,
     },
   );
+
+  //production
+  //  revalidatePath("/");
+  revalidatePath("/dashboard");
+   revalidatePath("/my-banks");
+   revalidatePath("/transaction-history");
 
   return { success: true };
 };
