@@ -15,18 +15,23 @@ import { redirect } from "next/navigation";
 //i make changes
 // import { getBankBalance } from "@/lib/actions/balance.actions";
 
-declare type SearchParamProps = {
-  // params: { [key: string]: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+// declare type SearchParamProps = {
+//   // params: { [key: string]: string };
+//   searchParams: { [key: string]: string | string[] | undefined };
+// };
 
 // type BankAccount = {
 //   currentBalance: number;
 // };
 
 
-const Home = async ({ searchParams }: SearchParamProps) => {
-  const params = searchParams;
+// const Home = async ({ searchParams }:{ searchParams?: {[key:string]: string | string[] | undefined} => {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const params = searchParams || {};
   const { id, page } = params;
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
@@ -120,4 +125,4 @@ const totalBalance = accounts?.totalCurrentBalance ?? 0;
   );
 };
 
-export default Home;
+// export default Home;
