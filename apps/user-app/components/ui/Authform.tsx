@@ -25,6 +25,29 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
 import PlaidLink from "./PlaidLink";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      // ease: "easeInOut",
+      ease: [0.16, 1, 0.3, 1], // premium easing
+    },
+  },
+};
 
 const Authform = ({ type }: { type: string }) => {
   // State to manage user and loading status
@@ -92,21 +115,31 @@ const Authform = ({ type }: { type: string }) => {
   };
 
   return (
-    <section className="flex min-h-screen w-full max-w-[420px] flex-col justify-center gap-5 py-10 md:gap-8">
-      <header className="flex flex-col gap-5 md:gap-6">
-        <Link
-          href={"/"}
-          className=" flex gap-2 cursor-pointer items-center"
-        >
-          <Image src="/icons/logo.svg" alt="Horizon logo" width={34} height={34} />
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="flex min-h-screen w-full max-w-[420px] flex-col justify-center gap-5 py-4 md:gap-8"
+    >
+      <motion.header
+        variants={itemVariants}
+        className="flex flex-col gap-5 md:gap-6"
+      >
+        <Link href={"/"} className=" flex gap-2 cursor-pointer items-center">
+          <Image
+            src="/icons/logo.svg"
+            alt="Horizon logo"
+            width={34}
+            height={34}
+          />
           <h1 className="text-2xl font-ibm-plex-serif font-bold text-black">
             Rupy Bank
           </h1>
         </Link>
 
-        <div className="flex flex-col gap-1 px-4 md:gap-3 ">
-          <h1 className="text-lg lg:text-2xl font-semibold text-gray-900">
-            {user ? "Link Account" : type === "sign-in" ? "Sign In" : "SIgn Up"}
+        <div className="flex flex-col gap-1 px-2 md:gap-3 ">
+          <h1 className="text-lg lg:text-2xl font-semibold text-blue-500">
+            {user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
             <p className="text-base font-normal text-gray-600">
               {user
                 ? "Link your account to get started"
@@ -114,7 +147,7 @@ const Authform = ({ type }: { type: string }) => {
             </p>
           </h1>
         </div>
-      </header>
+      </motion.header>
 
       {user ? (
         <div className="flex flex-col gap-3">
@@ -123,10 +156,14 @@ const Authform = ({ type }: { type: string }) => {
       ) : (
         <>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <motion.form
+              variants={containerVariants}
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-1"
+            >
               {type === "sign-up" && (
                 <>
-                  <div className="flex gap-4">
+                  <motion.div variants={itemVariants} className="flex gap-4">
                     <CustomizidInput
                       control={form.control}
                       name="firstName"
@@ -140,8 +177,9 @@ const Authform = ({ type }: { type: string }) => {
                       placeholder="Enter your last name"
                       label="Last Name"
                     />
-                  </div>
+                  </motion.div>
 
+                  <motion.div variants={itemVariants}>
                   <CustomizidInput
                     control={form.control}
                     name="address1"
@@ -155,8 +193,9 @@ const Authform = ({ type }: { type: string }) => {
                     label="City"
                     placeholder="Enter your city"
                   />
+                  </motion.div>
 
-                  <div className="flex gap-4">
+                  <motion.div variants={itemVariants} className="flex gap-4">
                     <CustomizidInput
                       control={form.control}
                       name="state"
@@ -169,8 +208,8 @@ const Authform = ({ type }: { type: string }) => {
                       label="Postal Code"
                       placeholder="Example: 11101"
                     />
-                  </div>
-                  <div className="flex gap-4">
+                  </motion.div>
+                  <motion.div variants={itemVariants} className="flex gap-4">
                     <CustomizidInput
                       control={form.control}
                       name="ssn"
@@ -183,10 +222,13 @@ const Authform = ({ type }: { type: string }) => {
                       placeholder="YYYY-MM-DD"
                       label="Date of Birth"
                     />
-                  </div>
+                  </motion.div>
                 </>
               )}
 
+              <motion.div variants={itemVariants}>
+
+              
               <CustomizidInput
                 control={form.control}
                 name="email"
@@ -200,29 +242,39 @@ const Authform = ({ type }: { type: string }) => {
                 placeholder="Enter your password"
                 label="Password"
               />
+              </motion.div>
 
-              <div className="flex flex-col gap-4">
-                <Button
-                  type="submit"
-                  disabled={isloading}
-                  className="text-white bg-blue-500 text-base rounded-lg shadow-form"
-                >
-                  {isloading ? (
-                    <>
-                      <Loader2 size={20} className="animate-spin" /> &nbsp;
-                      Loading...
-                    </>
-                  ) : type === "sign-in" ? (
-                    "Sign In"
-                  ) : (
-                    "Sign Up"
-                  )}
-                </Button>
-              </div>
-            </form>
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-col gap-4"
+              >
+                {/* <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                > */}
+                  <Button
+                    type="submit"
+                    disabled={isloading}
+                    className="text-white bg-blue-500 text-base rounded-lg shadow-form cursor-pointer"
+                  >
+                    {isloading ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" /> &nbsp;
+                        Loading...
+                      </>
+                    ) : type === "sign-in" ? (
+                      "Sign In"
+                    ) : (
+                      "Sign Up"
+                    )}
+                  </Button>
+                </motion.div>
+              {/* </motion.div> */}
+            </motion.form>
           </Form>
 
-          <footer className="flex justify-center gap-1">
+          <motion.footer variants={itemVariants} className="flex justify-center gap-1">
             <p className="text-base font-normal text-gray-600 ">
               {type === "sign-in"
                 ? "Don't have an account?"
@@ -234,10 +286,10 @@ const Authform = ({ type }: { type: string }) => {
             >
               {type === "sign-in" ? "Sign-Up" : "Sign In"}
             </Link>
-          </footer>
+          </motion.footer>
         </>
       )}
-    </section>
+    </motion.section>
   );
 };
 

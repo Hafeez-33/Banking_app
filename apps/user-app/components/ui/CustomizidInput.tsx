@@ -26,7 +26,7 @@ const CustomizidInput = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <FormLabel className="text-base w-full max-w-[280px] font-medium text-gray-700">
             {label}
           </FormLabel>

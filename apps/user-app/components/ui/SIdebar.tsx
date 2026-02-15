@@ -7,11 +7,27 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import Footer from "./Footer";
 import PlaidLink from "./PlaidLink";
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, x: -15 },
+  visible: { opacity: 1, x: 0 },
+};
+
 
 const sidebarLinks = [
   {
     imgURL: "/icons/home.svg",
-    route: "/",
+    route: "/dashboard",
     label: "Home",
   },
   {
@@ -39,9 +55,16 @@ const SIdebar = ({ user }: SiderbarProps) => {
   const pathname = usePathname();
 
   return (
-    <section className="sticky left-0 top-0 flex h-screen w-[300] flex-col justify-between border-r border-gray-200 bg-white pt-8 text-white max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px]">
-      <nav className="flex flex-col gap-1">
-        <Link href="/" className="mb-8 flex gap-2 cursor-pointer items-center">
+    <motion.section
+       initial={{ x: -60, opacity: 0 }}
+  animate={{ x: 0, opacity: 1 }}
+  transition={{
+    duration: 0.6,
+    ease: [0.16, 1, 0.3, 1],
+  }}
+    className="sticky left-0 top-0 flex h-screen w-[300] flex-col justify-between border-r border-gray-200 bg-white pt-8 text-white max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px]">
+      <motion.nav variants={container} initial="hidden" animate="visible"  className="flex flex-col gap-1">
+        <Link href="/dashboard" className="mb-8 flex gap-2 cursor-pointer items-center">
           <Image
             src="/icons/logo.svg"
             alt="Logo"
@@ -59,6 +82,7 @@ const SIdebar = ({ user }: SiderbarProps) => {
             pathname === items.route || pathname.startsWith(`${items.route}/`);
 
           return (
+             <motion.div variants={item} key={items.label}>
             <Link
               className={cn(
                 "flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center xl:justify-start",
@@ -84,14 +108,15 @@ const SIdebar = ({ user }: SiderbarProps) => {
                 {items.label}
               </p>
             </Link>
+            </motion.div>
           );
         })}
 
         <PlaidLink user={user} />
-      </nav>
+      </motion.nav>
 
       <Footer user={user} />
-    </section>
+    </motion.section>
   );
 };
 

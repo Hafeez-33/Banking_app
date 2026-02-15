@@ -247,12 +247,14 @@ export const createBankAccount = async ({
         fundingSourceUrl,
         shareableId,
         balance: 0,
-        name: accountData.name,
-        officialName: accountData.official_name,
-        mask: accountData.mask,
-        type: accountData.type,
-        subtype: accountData.subtype,
-        institutionName: institution.name,
+
+        // name: accountData.name,
+        // officialName: accountData.official_name,
+        // mask: accountData.mask,
+        // type: accountData.type,
+        // subtype: accountData.subtype,
+        // institutionName: institution.name,
+
         isPrimary: isPrimary ?? false,
       },
     );

@@ -12,15 +12,16 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         {/* Logo */}
-        <motion.div 
+        <motion.a 
+         href='/'
           className="flex items-center gap-3"
           whileHover={{ scale: 1.05 }}
         >
           <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-            H
+            R
           </div>
           <span className="text-xl font-bold text-foreground">Rupy Bank</span>
-        </motion.div>
+        </motion.a>
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-12">

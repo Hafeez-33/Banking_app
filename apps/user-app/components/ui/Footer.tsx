@@ -17,7 +17,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
   };
 
   return (
-    <footer className="flex cursor-pointer items-center justify-between gap-2 py-6">
+    <footer className="flex cursor-pointer items-center justify-between gap-2 py-10">
       <div
         className={
           type === "mobile"
@@ -25,7 +25,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
             : "flex size-base items-center justify-center rounded-full bg-gray-200 max-xl:hidden"
         }
       >
-        <p className="text-xl font-bold text-gray-700">{user?.firstName[0]}</p>
+        <p className="text-xl font-bold text-gray-800">{user?.firstName[0]}</p>
       </div>
 
       <div
@@ -36,7 +36,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
         }
       >
         <h1 className="text-base truncate text-gray-800 font-semibold">
-          {user?.firstName}
+          {user?.firstName} {user?.lastName}
         </h1>
         <p className="text-base truncate font-normal text-gray-600">
           {user?.email}
@@ -45,7 +45,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
 
       <div
         onClick={handleLogout}
-        className="relative size-5 max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center"
+        className="relative size-6 max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center"
       >
         <Image src="icons/logout.svg" alt="jsm" width={20} height={20}/>
       </div>

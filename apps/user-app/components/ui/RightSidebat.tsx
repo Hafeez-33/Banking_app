@@ -1,9 +1,13 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import BankCard from "./BankCard";
 import { countTransactionCategories } from "@/lib/utils";
 import Category from "./Category";
+
+import { motion } from "framer-motion";
+
 
 interface RightSidebarProps {
   user: User;
@@ -16,6 +20,15 @@ const RightSidebat = ({ user, transactions, banks }: RightSidebarProps) => {
   const categories: CategoryCount[] = countTransactionCategories(transactions);
 
   return (
+    <motion.div
+  initial={{ x: 60, opacity: 0 }}
+  animate={{ x: 0, opacity: 1 }}
+  transition={{
+    duration: 0.6,
+    ease: [0.16, 1, 0.3, 1],
+  }}
+>
+
     <aside className="no-scrollbar hidden h-screen max-h-screen flex-col border-l border-gray-200 xl:flex w-[355px] xl:overflow-y-scroll !important">
       <section className="flex flex-col pb-3">
         <div className="h-[120px] w-full bg-cover bg-no-repeat">
@@ -46,9 +59,9 @@ const RightSidebat = ({ user, transactions, banks }: RightSidebarProps) => {
       <section className="flex flex-col justify-between gap-4 px-6">
         <div className="flex w-full justify-between">
           <h2 className="text-18 font-semibold text-gray-900">My Banks</h2>
-          <Link href={"/"} className="flex gap-2">
+          <Link href={"/add-money"} className="flex gap-2">
             <Image src="/icons/plus.svg" width={20} height={20} alt="plus" />
-            <h2 className="text-base font-semibold text-gray-600">Add Banks</h2>
+            <h2 className="text-base font-semibold text-gray-600">Add Money</h2>
           </Link>
         </div>
 
@@ -82,7 +95,8 @@ const RightSidebat = ({ user, transactions, banks }: RightSidebarProps) => {
           <div className="relative flex flex-col items-center justify-center gap-5">
             {banks.map((bank, index) => (
               <div
-                key={bank.$id}
+                // key={bank.$id}
+                key={bank.appwriteItemId}
                 className={
                   index === 0
                     ? "relative z-10"
@@ -110,6 +124,7 @@ const RightSidebat = ({ user, transactions, banks }: RightSidebarProps) => {
         </div>
       </section>
     </aside>
+    </motion.div>
   );
 };
 

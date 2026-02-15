@@ -18,7 +18,7 @@ import Footer from "./Footer";
 const sidebarLinks = [
   {
     imgURL: "/icons/home.svg",
-    route: "/",
+    route: "/dashboard",
     label: "Home",
   },
   {

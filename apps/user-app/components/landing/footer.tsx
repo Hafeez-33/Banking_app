@@ -28,7 +28,7 @@ export function Footer() {
           >
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">
-                H
+                R
               </div>
               <span className="text-xl font-bold">Rupy Bank</span>
             </div>
