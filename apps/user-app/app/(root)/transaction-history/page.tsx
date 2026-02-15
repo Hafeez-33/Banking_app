@@ -9,13 +9,13 @@ import { getLoggedInUser } from "@/lib/actions/user.actions";
 import { formatAmount } from "@/lib/utils";
 import React from "react";
 
-type SearchParamProps = {
-  params: { [key: string]: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+// type SearchParamProps = {
+//   params: { [key: string]: string };
+//   searchParams: { [key: string]: string | string[] | undefined };
+// };
 
-const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
-  const params = await searchParams; // i have made changes here
+export default async function TransactionHistory ({ searchParams }: any) {
+  const params = searchParams || {}; // i have made changes here
   const { id, page } = params; // i have made changes here
   
   const currentPage = Number(page as string) || 1;
@@ -84,4 +84,4 @@ const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
   );
 };
 
-export default TransactionHistory;
+// export default TransactionHistory;
