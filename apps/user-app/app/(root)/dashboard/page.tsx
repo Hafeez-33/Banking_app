@@ -30,7 +30,7 @@ export default async function Home({
   searchParams
 }: any
 ) {
-  const params = searchParams || {};
+  const params = searchParams|| {};
   const { id, page } = params;
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
