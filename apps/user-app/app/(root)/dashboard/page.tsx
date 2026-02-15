@@ -29,10 +29,10 @@ import { redirect } from "next/navigation";
 export default async function Home({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const params = searchParams || {};
-  const { id, page } = params;
+  const params = await searchParams;
+  const { id, page } = params || {};
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
 
