@@ -27,12 +27,11 @@ import { redirect } from "next/navigation";
 
 // const Home = async ({ searchParams }:{ searchParams?: {[key:string]: string | string[] | undefined} => {
 export default async function Home({
-  searchParams,
-}: {
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  const { id, page } = params || {};
+  searchParams
+}: any
+) {
+  const params = searchParams || {};
+  const { id, page } = params;
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
 
