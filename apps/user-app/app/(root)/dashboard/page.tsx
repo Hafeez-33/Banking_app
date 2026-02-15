@@ -25,9 +25,9 @@ import { redirect } from "next/navigation";
 // };
 
 
-const Home = async ({ searchParams }: { [key: string]: string | string[] | undefined }) => {
+const Home = async ({ searchParams }: { searchParams?: {[key: string]: string | string[] | undefined} }) => {
   // const params = searchParams;
-  const { id, page } = (searchParams as { id?: string | string[]; page?: string | string[] }) || {};
+  const { id, page } = searchParams ||{};
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
 
