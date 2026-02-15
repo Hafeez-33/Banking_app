@@ -16,7 +16,7 @@ import { redirect } from "next/navigation";
 // import { getBankBalance } from "@/lib/actions/balance.actions";
 
 declare type SearchParamProps = {
-  params: { [key: string]: string };
+  // params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
@@ -26,7 +26,7 @@ declare type SearchParamProps = {
 
 
 const Home = async ({ searchParams }: SearchParamProps) => {
-  const params = await searchParams;
+  const params = searchParams;
   const { id, page } = params;
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
