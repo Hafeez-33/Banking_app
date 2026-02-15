@@ -14,7 +14,7 @@
 
 import Authform from "@/components/ui/Authform";
 
-export default function SignUpPage() {
+export default function SignUp() {
   return (
     <section className="flex justify-center size-full max-sm:px-6">
       <Authform type="sign-up" />
