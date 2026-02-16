@@ -18,17 +18,26 @@ const getEnvironment = (): "production" | "sandbox" => {
   }
 };
 
-const dwollaClient = new Client({
-  environment: getEnvironment(),
-  key: process.env.DWOLLA_KEY as string,
-  secret: process.env.DWOLLA_SECRET as string,
-});
+// const dwollaClient = new Client({
+//   environment: getEnvironment(),
+//   key: process.env.DWOLLA_KEY as string,
+//   secret: process.env.DWOLLA_SECRET as string,
+// });
+
+const getDwollaClient = () => {
+  return new Client({
+    environment: getEnvironment(),
+    key: process.env.DWOLLA_KEY as string,
+    secret: process.env.DWOLLA_SECRET as string,
+  });
+};
 
 // Create a Dwolla Funding Source using a Plaid Processor Token
 export const createFundingSource = async (
   options: CreateFundingSourceOptions
 ) => {
   try {
+    const dwollaClient = getDwollaClient();
     return await dwollaClient
       .post(`customers/${options.customerId}/funding-sources`, {
         name: options.fundingSourceName,
@@ -42,6 +51,7 @@ export const createFundingSource = async (
 
 export const createOnDemandAuthorization = async () => {
   try {
+    const dwollaClient = getDwollaClient();
     const onDemandAuthorization = await dwollaClient.post(
       "on-demand-authorizations"
     );
@@ -68,6 +78,7 @@ export const createDwollaCustomer = async (
   newCustomer: NewDwollaCustomerParams
 ) => {
   try {
+    const dwollaClient = getDwollaClient();
     const res = await dwollaClient.post("customers", newCustomer);
     return res.headers.get("location");
   } catch (err: any) {
@@ -151,6 +162,7 @@ export const createTransfer = async ({
   amount,
 }: TransferParams) => {
   try {
+    const dwollaClient = getDwollaClient();
     return await dwollaClient
       .post("transfers", {
         _links: {
@@ -211,6 +223,7 @@ export const addFundingSource = async ({
 // i added
 export const getFundingSources = async (customerId: string) => {
   try {
+    const dwollaClient = getDwollaClient();
     const response = await dwollaClient.get(
       `customers/${customerId}/funding-sources`
     );
