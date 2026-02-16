@@ -15,8 +15,8 @@ const ibmPlexSerif = IBM_Plex_Serif({
 
 
 export const metadata: Metadata = {
-  title: "Paytm",
-  description: "Paytm is a Modern baking platform for eyeryone",
+  title: "Rupy Bank",
+  description: "Rupy Bank is a Modern baking platform for eyeryone",
   icons:{
     icon:"/icons/logo.svg",
   }
