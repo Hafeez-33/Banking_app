@@ -36,6 +36,11 @@ const sidebarLinks = [
     route: "/payment-transfer",
     label: "Transfer Funds",
   },
+   {
+    imgURL: "/icons/add-money.webp",
+    route: "/add-money",
+    label: "Add Money",
+  },
 ];
 
 const MobileNavbar = ({ user }: MobileNavProps) => {

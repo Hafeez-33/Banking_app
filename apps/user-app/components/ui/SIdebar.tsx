@@ -62,7 +62,7 @@ const SIdebar = ({ user }: SiderbarProps) => {
     duration: 0.6,
     ease: [0.16, 1, 0.3, 1],
   }}
-    className="sticky left-0 top-0 flex h-screen w-[300] flex-col justify-between border-r border-gray-200 bg-white pt-8 text-white max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px]">
+    className="sticky left-0 top-0 flex h-screen w-[300px] flex-col justify-between border-r border-gray-200 bg-white pt-8 text-white max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px]">
       <motion.nav variants={container} initial="hidden" animate="visible"  className="flex flex-col gap-1">
         <Link href="/dashboard" className="mb-8 flex gap-2 cursor-pointer items-center">
           <Image
