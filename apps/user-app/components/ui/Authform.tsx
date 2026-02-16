@@ -25,7 +25,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
 import PlaidLink from "./PlaidLink";
-import { motion } from "framer-motion";
+import { motion, easeInOut } from "framer-motion";
 
 const containerVariants = {
   hidden: {},
@@ -43,8 +43,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.5,
-      // ease: "easeInOut",
-      ease: [0.16, 1, 0.3, 1], // premium easing
+      ease: easeInOut,
     },
   },
 };
